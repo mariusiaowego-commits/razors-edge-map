@@ -16,6 +16,13 @@
         "text": "I think the important thing is not to find any formulas, but to discover the quality of spirit that enables a man to get in touch with the divine.",
         "chapter": "Part Four, Chapter 17"
       }
+    ],
+    "name": "LARRY",
+    "zh": "拉里·达雷尔",
+    "desc": "流浪追寻生命意义，曾是一战空军飞行员",
+    "locations": [
+      0,
+      17
     ]
   },
   "isabel": {
@@ -31,6 +38,12 @@
         "text": "I don't want to seem hard-hearted, but after all, one has to be practical. You can't expect a girl to wait around forever.",
         "chapter": "Part One, Chapter 3"
       }
+    ],
+    "name": "ISABEL",
+    "zh": "伊莎贝尔",
+    "desc": "拉里的未婚妻，留在巴黎，后嫁给富商格雷",
+    "locations": [
+      0
     ]
   },
   "bradshaw": {
@@ -46,6 +59,12 @@
         "text": "There is in India a man of extraordinary spiritual power. He is a sage of the Himalayas. I have heard people speak of him with awe.",
         "chapter": "Part One, Chapter 7"
       }
+    ],
+    "name": "MRS. BRADSHAW",
+    "zh": "布拉肖太太",
+    "desc": "贵格会信徒，精神导师，引拉里去印度",
+    "locations": [
+      7
     ]
   },
   "sophie": {
@@ -61,7 +80,11 @@
         "text": "I'm not fit for decent society. I'm sloppy and dirty and I drink too much. Why should you bother with me?",
         "chapter": "Part One, Chapter 4"
       }
-    ]
+    ],
+    "name": "SOPHIE",
+    "zh": "索菲·麦克唐纳",
+    "desc": "丈夫孩子车祸亡后沉沦酒精，青梅竹马",
+    "locations": []
   },
   "landor": {
     "bio": "Walter Savage Landor (1775–1864) was a renowned English poet and writer, best known for his philosophical dialogues and classical verse. Though not a character in Maugham's novel, his poem 'Dying Speech of an Old Philosopher' serves as the epigraph for Chapter 5 of The Razor's Edge. The poem captures the novel's central theme — Landor's lines about 'I have drunk and seen the spider' and being 'cumbered with the joy of a great rest' resonate with Larry's spiritual journey toward enlightenment and liberation from earthly attachments.",
@@ -72,6 +95,10 @@
         "text": "I have drunk and seen the spider. Though God's珊瑚 to mine eyes, I have had my day. I will be glad to be Cumbered with the joy of a great rest.",
         "chapter": "Chapter 5, Epigraph"
       }
-    ]
+    ],
+    "name": "WALTER LANDOR",
+    "zh": "沃尔特·兰德尔",
+    "desc": "19世纪英国诗人/作家，《刀锋》第5章引用其诗《I Strove with None》",
+    "locations": []
   }
 }
