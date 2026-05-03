@@ -1,7 +1,7 @@
 # 🗺️ razors-edge-map 刀锋地图 - 当前开发状态
 
-**最后更新**: 2026-05-03
-**当前阶段**: 架构规范化完成，GitHub repo 已建立
+**最后更新**: 2026-05-04
+**当前阶段**: v2.0 多角色文学架构完成，修复 JSON 中文引号转义 pending browser verification
 
 ---
 
