@@ -12,3 +12,4 @@ Thumbs.db
 
 # Local data (future expansion)
 # data/ is now tracked — see data/waypoints.json
+.worktrees/

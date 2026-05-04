@@ -156,14 +156,14 @@
   .timeline-brief-text { color: #c8b898; }
   .timeline-brief-empty { font-size: 9.5px; color: #5a6a7a; text-align: center; padding: 4px 0; }
 
-  /* ── Status Objects panel — right side ── */
+  /* ── Status Objects panel — right side, above quote-panel ── */
   .status-panel {
     display: none;
     position: absolute;
-    top: 60px;
+    bottom: 340px;
     right: 12px;
     width: 260px;
-    max-height: calc(100vh - 120px);
+    max-height: calc(100vh - 400px);
     overflow-y: auto;
     background: rgba(8, 16, 34, 0.96);
     border: 1px solid #3a5a8a;
@@ -439,9 +439,9 @@
     letter-spacing: 0.5px;
   }
 
-  /* Quote panel — above legend, right side */
+  /* Quote panel — right side, above status-panel */
   .quote-panel {
-    bottom: 230px;
+    bottom: 80px;
     right: 12px;
     width: 240px;
     display: none;
@@ -527,27 +527,6 @@
     <span style="color:#c9a84c;">&#9670;</span> Status Objects &middot; 面子之物
   </div>
   <div id="status-list">Loading...</div>
-</div>
-
-<!-- Poem -->
-<div class="poem-panel panel">
-  <div class="poem-title">Walter Landor &middot; 兰德尔的诗</div>
-  <div class="poem-en">
-    I strove with none, for none was worth my strife;<br>
-    Nature I loved, and next to Nature, Art;<br>
-    I warmed both hands before the fire of Life;<br>
-    It sinks, and I am ready to depart.
-  </div>
-  <div class="poem-zh">
-    我不与人争，因无人值得我争斗<br>
-    我爱自然，其次爱与自然相近的艺术<br>
-    我把双手伸向生命之火取暖<br>
-    火萎了，我已准备好离开
-  </div>
-  <div class="poem-src">
-    Landor, "Dying Speech of an Old Philosopher"<br>
-    《刀锋》第5章引用 &middot; 卷首语
-  </div>
 </div>
 
 <!-- Legend -->
@@ -1187,6 +1166,9 @@ var RazorMap = (function() {
   var expandedEvents = {};
   var routeLayers = {};
   var visibleCharacters = { larry: true, isabel: true, sophie: true, gray: true, elliott: true };
+  var activeWpId = null;   // currently open waypoint
+  var activeCharId = null;  // last clicked character route
+  var activeCharFilter = null; // character filter for status/quote panels
 
   // ─── INIT ──────────────────────────────────────────────────
   function init() {
@@ -1239,7 +1221,7 @@ var RazorMap = (function() {
     buildCharPanel();
     buildStatusPanel();
     buildLegend();
-    rotateQuotes();
+    showContextQuote();
   }
 
   // ─── ROUTES ────────────────────────────────────────────────
@@ -1268,6 +1250,10 @@ var RazorMap = (function() {
       }
     }
     buildCharPanel();
+    // Update context filter to this character's objects
+    activeCharFilter = [charId];
+    activeWpId = null;
+    updateContextPanels();
   }
 
   // ─── WAYPOINT MARKERS ───────────────────────────────────────
@@ -1304,6 +1290,13 @@ var RazorMap = (function() {
       className: 'razor-popup'
     });
     marker.addTo(map);
+    // Track active waypoint for context-aware status + quote panels
+    marker.on('click', function() {
+      activeWpId = wp.id;
+      var charsHere = (wp.characters || []).slice();
+      activeCharFilter = charsHere.length > 0 ? charsHere : null;
+      updateContextPanels();
+    });
   }
 
   // ─── POPUP BUILDERS ─────────────────────────────────────────
@@ -1530,11 +1523,33 @@ var RazorMap = (function() {
   function buildStatusPanel() {
     var container = document.getElementById('status-list');
     if (!container) return;
-    if (!STATUS_OBJECTS || STATUS_OBJECTS.length === 0) {
-      container.innerHTML = '<div style="font-size:9px;color:#5a6a7a;text-align:center;padding:20px 0;">暂无面子之物数据</div>';
+    var objects = getFilteredStatusObjects();
+    if (objects.length === 0) {
+      container.innerHTML = '<div style="font-size:9px;color:#5a6a7a;text-align:center;padding:20px 0;">点击地点或角色查看相关面子之物</div>';
       return;
     }
-    container.innerHTML = STATUS_OBJECTS.map(buildStatusCard).join('');
+    container.innerHTML = objects.map(buildStatusCard).join('');
+  }
+
+  function getFilteredStatusObjects() {
+    var objects = STATUS_OBJECTS || [];
+    // If a waypoint is active, filter to that waypoint's objects
+    if (activeWpId) {
+      var byWp = objects.filter(function(o) { return o.waypoint_id === activeWpId; });
+      if (byWp.length > 0) return byWp;
+    }
+    // If a character filter is active, filter by those characters
+    if (activeCharFilter && activeCharFilter.length > 0) {
+      var byChar = objects.filter(function(o) { return activeCharFilter.indexOf(o.owner) >= 0; });
+      if (byChar.length > 0) return byChar;
+    }
+    // Fallback: all
+    return objects;
+  }
+
+  function updateContextPanels() {
+    buildStatusPanel();
+    showContextQuote();
   }
 
   function toggleStatusPanel() {
@@ -1545,6 +1560,7 @@ var RazorMap = (function() {
   function toggleStatusCard(card) {
     var details = card.querySelector('.status-card-details');
     var btn = card.querySelector('.status-expand-btn');
+    if (!details || !btn) return;
     var isOpen = details.style.display !== 'none';
     details.style.display = isOpen ? 'none' : 'block';
     btn.textContent = isOpen ? '展开详情 ▾' : '收起详情 ▴';
@@ -1637,20 +1653,63 @@ var RazorMap = (function() {
     }
   }
 
-  // ─── QUOTE ROTATION ─────────────────────────────────────────
-  function rotateQuotes() {
-    if (QUOTES.length === 0) return;
-    activeQuoteIdx = (activeQuoteIdx + 1) % QUOTES.length;
-    var q = QUOTES[activeQuoteIdx];
-    var ch = CHARACTERS[q.speaker] || { name_zh: q.speaker, color: '#888' };
-    var html = '<div class="quote-text">"' + q.text + '"</div>';
-    html += '<div class="quote-zh">' + q.zh + '</div>';
-    html += '<div class="quote-src">—— ' + ch.name_zh + ' · ' + q.chapter + '</div>';
-    if (q.url) {
-      html += '<a class="quote-url" href="' + q.url + '" target="_blank" rel="noopener">&#8594; 外部阅读</a>';
+  // ─── CONTEXT-AWARE QUOTE + LANDOR POEM ───────────────────────
+  function showContextQuote() {
+    // Always show the Landor poem as the epigraph header
+    var landorHtml = '<div style="margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid #2a3a5a;">' +
+      '<div style="font-size:9px;color:#c9a84c;letter-spacing:1px;margin-bottom:6px;">&#9670; 卷首语 EPIGRAPH</div>' +
+      '<div style="font-size:10.5px;color:#c8b898;font-style:italic;line-height:1.7;margin-bottom:4px;">' +
+      '"I strove with none, for none was worth my strife;<br>' +
+      'Nature I loved, and next to Nature, Art;<br>' +
+      'I warmed both hands before the fire of Life;<br>' +
+      'It sinks, and I am ready to depart."</div>' +
+      '<div style="font-size:9.5px;color:#9a8a78;line-height:1.6;margin-bottom:5px;">' +
+      '我不与人争，因无人值得我争斗<br>我爱自然，其次爱与自然相近的艺术<br>' +
+      '我把双手伸向生命之火取暖。火萎了，我已准备好离开。</div>' +
+      '<div style="font-size:8px;color:#5a6a7a;">Landor · 《老哲学家遗言》&nbsp; 《刀锋》第5章</div>' +
+      '</div>';
+
+    // Build context-aware quote section
+    var quoteHtml = '';
+    var quotesToShow = getFilteredQuotes();
+    if (quotesToShow.length > 0) {
+      quoteHtml = '<div style="margin-bottom:8px;"><div style="font-size:9px;color:#c9a84c;letter-spacing:1px;margin-bottom:6px;">&#9670; 相关名句 QUOTES</div></div>';
+      quotesToShow.forEach(function(q) {
+        var ch = CHARACTERS[q.speaker] || { name_zh: q.speaker, color: '#888' };
+        quoteHtml += '<div style="margin-bottom:10px;padding-bottom:8px;border-bottom:1px dashed #1e2e48;' + (quotesToShow.indexOf(q) === quotesToShow.length - 1 ? 'border-bottom:none;' : '') + '">';
+        quoteHtml += '<div style="font-size:10.5px;color:#d4c49a;font-style:italic;line-height:1.65;">"' + q.text + '"</div>';
+        quoteHtml += '<div style="font-size:9.5px;color:#9a8a78;line-height:1.6;margin:4px 0 5px;">' + q.zh + '</div>';
+        quoteHtml += '<div style="font-size:8.5px;color:' + ch.color + ';">—— ' + ch.name_zh + ' · ' + q.chapter + '</div>';
+        if (q.url) {
+          quoteHtml += '<a class="quote-url" href="' + q.url + '" target="_blank" rel="noopener">&#8594; 外部阅读</a>';
+        }
+        quoteHtml += '</div>';
+      });
     }
+
+    var html = landorHtml + quoteHtml;
     document.getElementById('quote-content').innerHTML = html;
     document.getElementById('quote-panel').classList.add('visible');
+  }
+
+  function getFilteredQuotes() {
+    var allQuotes = QUOTES || [];
+    // Prefer waypoint context
+    if (activeWpId) {
+      var wp = WAYPOINTS.find(function(w) { return w.id === activeWpId; });
+      if (wp && wp.events) {
+        var wpChars = wp.characters || [];
+        var relevant = allQuotes.filter(function(q) { return wpChars.indexOf(q.speaker) >= 0; });
+        if (relevant.length > 0) return relevant;
+      }
+    }
+    // Character filter
+    if (activeCharFilter && activeCharFilter.length > 0) {
+      var byChar = allQuotes.filter(function(q) { return activeCharFilter.indexOf(q.speaker) >= 0; });
+      if (byChar.length > 0) return byChar;
+    }
+    // Default: show Landor + Larry (protagonist)
+    return allQuotes.filter(function(q) { return q.speaker === 'landor' || q.speaker === 'larry'; });
   }
 
   function closeQuote() {
@@ -1666,17 +1725,28 @@ var RazorMap = (function() {
     flyToYear: flyToYear,
     setSliderYear: setSliderYear,
     buildTimelineBrief: buildTimelineBrief,
-    rotateQuotes: rotateQuotes,
+    showContextQuote: showContextQuote,
     closeQuote: closeQuote,
     toggleStatusPanel: toggleStatusPanel,
+    toggleStatusCard: toggleStatusCard,
+    updateContextPanels: updateContextPanels,
   };
 })();
 
 // Start
 window.addEventListener('DOMContentLoaded', function() {
   RazorMap.init();
-  // Rotate quote every 15 seconds
-  setInterval(function() { RazorMap.rotateQuotes(); }, 15000);
+  // Press Q to toggle the quote panel
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'q' || e.key === 'Q') {
+      var panel = document.getElementById('quote-panel');
+      if (panel.classList.contains('visible')) {
+        RazorMap.closeQuote();
+      } else {
+        RazorMap.showContextQuote();
+      }
+    }
+  });
 });
 </script>
 </body>
