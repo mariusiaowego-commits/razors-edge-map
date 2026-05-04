@@ -703,11 +703,11 @@
       <div class="leg-line" style="background:#c070c8;"></div>
       <span>Suzanne · 苏珊</span>
     </div>
-    <div class="legend-item" id="leg-high_energy" onclick="RazorMap.showEventCluster('high_energy')">
+    <div class="legend-item" id="leg-high_energy" onclick="RazorMap.toggleHighEnergy()">
       <div class="leg-star">★</div>
       <span>High-Energy Scene · 高能情节</span>
     </div>
-    <div class="legend-item" id="leg-maugham" onclick="RazorMap.toggleRoute('maugham')">
+    <div class="legend-item" id="leg-maugham" onclick="RazorMap.toggleMaugham()">
       <div class="leg-circle" style="background:#9b8df0;"></div>
       <span>Maugham Narrative · 毛姆视角</span>
     </div>
@@ -1421,10 +1421,14 @@ var RazorMap = (function() {
   var sophieVoyageLayer = null;
   var sophieVoyageShipMarkers = {};
   var sophieVoyageActive = false;
+  var highEnergyGroup = null; // L.LayerGroup for high-energy star markers
   var visibleCharacters = { larry: true, isabel: true, sophie: true, gray: true, elliott: true, suzanne: true };
   var activeWpId = null;   // currently open waypoint
   var activeCharId = null;  // last clicked character route
   var activeCharFilter = null; // character filter for status/quote panels
+  var visibleMaugham = true;   // toggled by legend — controls maugham popup tab
+  var visibleHighEnergy = true; // toggled by legend — controls high-energy markers
+  var maughamModeActive = false; // current maugham legend toggle state
 
   // ─── INIT ──────────────────────────────────────────────────
   function init() {
@@ -1463,6 +1467,30 @@ var RazorMap = (function() {
     WAYPOINTS.forEach(function(wp) {
       addWaypointMarker(wp);
     });
+
+    // Build high-energy scene markers as a dedicated LayerGroup
+    highEnergyGroup = L.layerGroup();
+    WAYPOINTS.forEach(function(wp) {
+      var isJoint = wp.joint_note && wp.events && wp.events.some(function(e) {
+        var ev = EVENTS[e];
+        return ev && ev.significance === 'high_energy';
+      });
+      var isHigh = wp.is_highlight || isJoint;
+      if (!isHigh) return;
+      var icon = L.divIcon({
+        html: '<div style="font-size:22px;color:#c9a84c;text-shadow:0 0 8px rgba(201,168,76,0.9),0 0 16px rgba(201,168,76,0.4);">&#9733;</div>',
+        className: '', iconSize: [24, 24], iconAnchor: [12, 12],
+      });
+      var marker = L.marker([wp.lat, wp.lng], { icon: icon });
+      marker.bindPopup(buildWaypointPopup(wp), { maxWidth: 340, className: 'razor-popup' });
+      marker.on('click', function() {
+        activeWpId = wp.id;
+        activeCharFilter = (wp.characters || []).slice();
+        updateContextPanels();
+      });
+      marker.addTo(highEnergyGroup);
+    });
+    if (visibleHighEnergy) highEnergyGroup.addTo(map);
 
     // Sophie missing marker — anchor icon (ship, distinct from character routes)
     L.marker([32.5, 25.5], {
@@ -1580,6 +1608,29 @@ var RazorMap = (function() {
       // Fly to show the route
       map.flyTo([36.0, 15.0], 5, { duration: 1.2 });
     }
+    syncLegendState();
+  }
+
+  // Maugham Narrative toggle — shows/hides Maugham tab in waypoint popups
+  function toggleMaugham() {
+    maughamModeActive = !maughamModeActive;
+    syncLegendState();
+    // Maugham is a popup tab, not a map layer — no map changes needed
+    // Re-open the currently active waypoint popup so tab visibility updates
+    if (activeWpId && waypointMarkers[activeWpId]) {
+      waypointMarkers[activeWpId].openPopup();
+    }
+  }
+
+  // High-energy scene markers toggle
+  function toggleHighEnergy() {
+    visibleHighEnergy = !visibleHighEnergy;
+    if (visibleHighEnergy) {
+      highEnergyGroup.addTo(map);
+    } else {
+      highEnergyGroup.remove();
+    }
+    syncLegendState();
   }
 
   function toggleAllRoutes(show) {
@@ -1603,14 +1654,17 @@ var RazorMap = (function() {
 
   // ─── WAYPOINT MARKERS ───────────────────────────────────────
   function addWaypointMarker(wp) {
-    var isJoint = wp.joint_note && wp.events.some(function(e){ var ev = EVENTS[e]; return ev && ev.significance === 'high_energy'; });
+    // Skip high-energy/highlight waypoints — those are rendered as star markers in highEnergyGroup
+    var isJoint = wp.joint_note && wp.events && wp.events.some(function(e) {
+      var ev = EVENTS[e];
+      return ev && ev.significance === 'high_energy';
+    });
     var isHigh = wp.is_highlight || isJoint;
-    var color = isHigh ? '#c9a84c' : '#6a9fd8';
-    var radius = isHigh ? 8 : 5;
+    if (isHigh) return; // handled by highEnergyGroup
 
-    var iconHtml = isHigh
-      ? '<div style="font-size:22px;color:#c9a84c;text-shadow:0 0 8px rgba(201,168,76,0.9),0 0 16px rgba(201,168,76,0.4);">&#9733;</div>'
-      : '<div style="width:14px;height:14px;background:' + color + ';border-radius:50%;border:2px solid rgba(255,255,255,0.9);box-shadow:0 0 6px rgba(106,159,216,0.7),0 2px 4px rgba(0,0,0,0.5);"></div>';
+    var color = '#6a9fd8';
+
+    var iconHtml = '<div style="width:14px;height:14px;background:' + color + ';border-radius:50%;border:2px solid rgba(255,255,255,0.9);box-shadow:0 0 6px rgba(106,159,216,0.7),0 2px 4px rgba(0,0,0,0.5);"></div>';
 
     var marker = L.marker([wp.lat, wp.lng], {
       icon: L.divIcon({
@@ -1622,7 +1676,7 @@ var RazorMap = (function() {
     // Permanent label showing city name
     var label = L.marker([wp.lat, wp.lng], {
       icon: L.divIcon({
-        html: '<div class="wp-label' + (isHigh ? ' wp-label-high' : '') + '">' + wp.city_zh + '</div>',
+        html: '<div class="wp-label">' + wp.city_zh + '</div>',
         className: '', iconSize: [80, 16], iconAnchor: [40, -8],
         popupAnchor: [0, -10]
       }),
@@ -1972,6 +2026,7 @@ var RazorMap = (function() {
 
   // ─── LEGEND ─────────────────────────────────────────────────
   function syncLegendState() {
+    // Character routes
     ['larry','isabel','sophie','gray','elliott','suzanne'].forEach(function(id) {
       var el = document.getElementById('leg-' + id);
       if (!el) return;
@@ -1982,6 +2037,15 @@ var RazorMap = (function() {
         el.classList.add('inactive');
       }
     });
+    // Maugham
+    var elM = document.getElementById('leg-maugham');
+    if (elM) { elM.classList.remove('active','inactive'); elM.classList.add(maughamModeActive ? 'active' : 'inactive'); }
+    // High energy
+    var elH = document.getElementById('leg-high_energy');
+    if (elH) { elH.classList.remove('active','inactive'); elH.classList.add(visibleHighEnergy ? 'active' : 'inactive'); }
+    // Sophie voyage
+    var elSv = document.getElementById('leg-sophie_voyage');
+    if (elSv) { elSv.style.opacity = sophieVoyageActive ? '1' : '0.5'; }
   }
 
   function buildLegend() {
@@ -2191,6 +2255,8 @@ var RazorMap = (function() {
     openCharPanel: openCharPanel,
     toggleAllRoutes: toggleAllRoutes,
     toggleSophieVoyage: toggleSophieVoyage,
+    toggleMaugham: toggleMaugham,
+    toggleHighEnergy: toggleHighEnergy,
     toggleStatusPanel: toggleStatusPanel,
     toggleStatusCard: toggleStatusCard,
     updateContextPanels: updateContextPanels,
