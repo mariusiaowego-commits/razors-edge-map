@@ -261,9 +261,9 @@
     letter-spacing: 0.5px;
   }
 
-  /* Quote panel — bottom right */
+  /* Quote panel — above legend, right side */
   .quote-panel {
-    bottom: 80px;
+    bottom: 230px;
     right: 12px;
     width: 240px;
     display: none;
@@ -306,6 +306,27 @@
   .leaflet-control-layers-label { color: #8fa8c8 !important; font-size: 10px !important; }
   .razor-marker { cursor: pointer; }
   .razor-marker:hover { filter: brightness(1.3); }
+
+  /* Waypoint labels */
+  .wp-label {
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    color: #c8d8f0;
+    background: rgba(8,16,34,0.78);
+    padding: 2px 6px;
+    border-radius: 3px;
+    border: 1px solid #4a6fa5;
+    white-space: nowrap;
+    text-align: center;
+    letter-spacing: 0.5px;
+    pointer-events: none;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+  }
+  .wp-label-high {
+    color: #f5d76e;
+    border-color: #c9a84c;
+    background: rgba(10,20,40,0.85);
+  }
 </style>
 </head>
 <body>
@@ -891,6 +912,16 @@ var RazorMap = (function() {
       })
     });
 
+    // Permanent label showing city name
+    var label = L.marker([wp.lat, wp.lng], {
+      icon: L.divIcon({
+        html: '<div class="wp-label' + (isHigh ? ' wp-label-high' : '') + '">' + wp.city_zh + '</div>',
+        className: '', iconSize: [80, 16], iconAnchor: [40, -8],
+        popupAnchor: [0, -10]
+      }),
+      interactive: false
+    }).addTo(map);
+
     var popupContent = buildWaypointPopup(wp);
     marker.bindPopup(popupContent, {
       maxWidth: 520,
@@ -997,17 +1028,23 @@ var RazorMap = (function() {
 
   // ─── TAB SWITCHING ──────────────────────────────────────────
   function switchTab(btn, tabName, wpId) {
-    var panel = btn.closest('.popup-tab-content');
-    if (!panel) return;
-    panel.querySelectorAll('.popup-tab-btn').forEach(function(b){ b.classList.remove('active'); });
+    var tabsContainer = btn.closest('.popup-tabs');
+    if (!tabsContainer) return;
+    // Deactivate all buttons in this tab group
+    tabsContainer.querySelectorAll('.popup-tab-btn').forEach(function(b){ b.classList.remove('active'); });
     btn.classList.add('active');
 
+    // Deactivate all content panels, then activate target
+    var popupBody = tabsContainer.nextElementSibling;
+    while (popupBody && !popupBody.classList.contains('popup-tab-content')) {
+      popupBody = popupBody.nextElementSibling;
+    }
+    if (popupBody) {
+      popupBody.parentElement.querySelectorAll('.popup-tab-content').forEach(function(c){ c.classList.remove('active'); });
+    }
     var contentId = 'tab-' + tabName + '-' + wpId;
     var contentEl = document.getElementById(contentId);
-    if (contentEl) {
-      panel.parentElement.querySelectorAll('.popup-tab-content').forEach(function(c){ c.classList.remove('active'); });
-      contentEl.classList.add('active');
-    }
+    if (contentEl) contentEl.classList.add('active');
   }
 
   // ─── EVENT EXPAND ───────────────────────────────────────────
