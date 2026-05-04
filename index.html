@@ -199,11 +199,11 @@
   .timeline-brief-text { color: #c8b898; }
   .timeline-brief-empty { font-size: 9.5px; color: #5a6a7a; text-align: center; padding: 4px 0; }
 
-  /* ── Status Objects panel — right side, above quote-panel ── */
+  /* ── Status Objects panel — right side, above legend ── */
   .status-panel {
     display: none;
     position: absolute;
-    bottom: 340px;
+    bottom: 300px;
     right: 12px;
     width: 260px;
     max-height: calc(100vh - 400px);
@@ -212,7 +212,7 @@
     border: 1px solid #3a5a8a;
     border-radius: 12px;
     padding: 12px;
-    z-index: 999;
+    z-index: 800;
   }
   .status-panel.open { display: block; }
   .status-card {
@@ -224,7 +224,54 @@
     transition: border-color 0.15s;
     cursor: pointer;
   }
-  .status-card:hover { border-color: #4a7ab0; }
+  .status-card:hover { border-color: #c9a84c; }
+
+  /* ── Status Objects Modal ── */
+  #status-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(4, 8, 18, 0.85);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+  }
+  #status-modal-overlay.open { display: flex; }
+  #status-modal {
+    background: rgba(8, 16, 34, 0.98);
+    border: 1px solid #3a5a8a;
+    border-radius: 16px;
+    width: min(700px, 94vw);
+    max-height: 86vh;
+    overflow-y: auto;
+    padding: 20px 24px;
+  }
+  #status-modal .modal-hdr {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #2a3a5a;
+  }
+  #status-modal .modal-hdr h3 { margin: 0; color: #c9a84c; font-family: var(--font-serif); font-size: 16px; }
+  #status-modal .modal-body { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
+  #status-modal .modal-card {
+    border: 1px solid #1e2e48;
+    border-radius: 10px;
+    padding: 12px;
+    background: rgba(10,18,40,0.7);
+    cursor: pointer;
+    transition: border-color 0.15s, transform 0.1s;
+  }
+  #status-modal .modal-card:hover { border-color: #c9a84c; transform: translateY(-1px); }
+  #status-modal .modal-card-name { font-weight: 600; color: #e0d0a0; margin-bottom: 5px; font-size: 12px; }
+  #status-modal .modal-card-meta { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px; }
+  #status-modal .modal-card-desc { font-size: 10px; color: #7a8a9a; line-height: 1.5; }
+  #status-modal .badge { display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 9px; font-weight: 600; }
+  .badge-type { background: rgba(100,140,200,0.25); color: #8ab0d0; }
+  .badge-owner { background: rgba(200,160,80,0.2); color: #c9a84c; }
+
   .status-card-header {
     display: flex;
     align-items: flex-start;
@@ -582,6 +629,17 @@
   <div id="status-list">Loading...</div>
 </div>
 
+<!-- Status Objects Modal — full catalog browser -->
+<div id="status-modal-overlay" onclick="if(event.target===this)RazorMap.closeStatusModal()">
+  <div id="status-modal">
+    <div class="modal-hdr">
+      <h3>&#9670; Status Objects &middot; 面子之物 — Complete Catalog</h3>
+      <span class="panel-close" onclick="RazorMap.closeStatusModal()" style="font-size:20px;color:#4a6a9a;cursor:pointer;">&times;</span>
+    </div>
+    <div class="modal-body" id="status-modal-grid"></div>
+  </div>
+</div>
+
 <!-- Legend -->
   <div class="legend panel">
     <div class="panel-title">Legend &middot; 图例</div>
@@ -618,7 +676,7 @@
       <span>Sophie Missing · 苏菲失踪</span>
     </div>
     <div style="margin-top:10px;padding-top:8px;border-top:1px dashed #2a3a5a;text-align:center;">
-      <button onclick="RazorMap.toggleStatusPanel()" style="background:none;border:1px solid #3a5a8a;border-radius:6px;padding:5px 10px;color:#8ab0d0;font-size:9px;cursor:pointer;width:100%;">&#9670; 面子之物 Status Objects</button>
+      <button onclick="RazorMap.openStatusModal()" style="background:none;border:1px solid #3a5a8a;border-radius:6px;padding:5px 10px;color:#8ab0d0;font-size:9px;cursor:pointer;width:100%;">&#9670; 面子之物 Status Objects</button>
     </div>
   </div>
 
@@ -1306,6 +1364,10 @@ var RazorMap = (function() {
     buildStatusPanel();
     buildLegend();
     syncLegendState();
+    // Draw all visible character routes on load
+    Object.keys(visibleCharacters).forEach(function(charId) {
+      if (visibleCharacters[charId]) addRoute(charId);
+    });
     showContextQuote();
   }
 
@@ -1648,6 +1710,46 @@ var RazorMap = (function() {
     panel.classList.toggle('open');
   }
 
+  function openStatusModal() {
+    var overlay = document.getElementById('status-modal-overlay');
+    var grid = document.getElementById('status-modal-grid');
+    var objects = STATUS_OBJECTS;
+    var html = '';
+    objects.forEach(function(obj) {
+      var wp = WAYPOINTS.find(function(w) { return w.id === obj.waypoint_id; });
+      var loc = wp ? (wp.city_zh + ' · ' + wp.city) : obj.waypoint_id;
+      var desc = (obj.story_zh || obj.story || '').substring(0, 90) + ((obj.story_zh || obj.story || '').length > 90 ? '…' : '');
+      html += '<div class="modal-card" onclick="RazorMap.flyToStatusObject(\'' + obj.id + '\')">';
+      html += '<div class="modal-card-name">' + obj.name_zh + ' ' + obj.name + '</div>';
+      html += '<div class="modal-card-meta">';
+      html += '<span class="badge badge-type">' + obj.type + '</span>';
+      html += '<span class="badge badge-owner">' + obj.owner + '</span>';
+      html += '<span style="font-size:9px;color:#6a8aaa;">' + loc + ' (' + obj.appear_year + ')</span>';
+      html += '</div>';
+      html += '<div class="modal-card-desc">' + desc + '</div>';
+      html += '</div>';
+    });
+    grid.innerHTML = html;
+    overlay.classList.add('open');
+  }
+
+  function closeStatusModal() {
+    document.getElementById('status-modal-overlay').classList.remove('open');
+  }
+
+  function flyToStatusObject(objId) {
+    var obj = STATUS_OBJECTS.find(function(o) { return o.id === objId; });
+    if (!obj) return;
+    var wp = WAYPOINTS.find(function(w) { return w.id === obj.waypoint_id; });
+    if (!wp) return;
+    closeStatusModal();
+    map.flyTo([wp.lat, wp.lng], 7, { duration: 1.5 });
+    setTimeout(function() {
+      var marker = markers[wp.id];
+      if (marker) marker.openPopup();
+    }, 800);
+  }
+
   function toggleStatusCard(card) {
     var details = card.querySelector('.status-card-details');
     var btn = card.querySelector('.status-expand-btn');
@@ -1862,6 +1964,9 @@ var RazorMap = (function() {
     toggleStatusCard: toggleStatusCard,
     updateContextPanels: updateContextPanels,
     showEventCluster: showEventCluster,
+    openStatusModal: openStatusModal,
+    closeStatusModal: closeStatusModal,
+    flyToStatusObject: flyToStatusObject,
   };
 })();
 
