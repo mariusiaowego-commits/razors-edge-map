@@ -65,6 +65,18 @@
     top: 80px;
     left: 12px;
     width: 220px;
+    border-color: #3a5a8a;
+  }
+  .char-panel::before {
+    content: '点击角色切换路线 · CLICK TO TOGGLE';
+    display: block;
+    font-size: 8px;
+    color: #4a6a9a;
+    letter-spacing: 1px;
+    text-align: center;
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+    border-bottom: 1px dashed #2a3a5a;
   }
   .char-item {
     margin-bottom: 8px;
@@ -120,9 +132,21 @@
     bottom: 80px;
     right: 12px;
     width: 160px;
+    border-color: #3a5a8a;
+  }
+  .legend::before {
+    content: '点击地图标记点查看详情';
+    display: block;
+    font-size: 8px;
+    color: #4a6a9a;
+    letter-spacing: 0.5px;
+    text-align: center;
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+    border-bottom: 1px dashed #2a3a5a;
   }
   .legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 9.5px; color: #8fa8c8; }
-  .leg-line { width: 24px; height: 2px; border-radius: 1px; }
+  .leg-line { width: 24px; height: 4px; border-radius: 2px; flex-shrink: 0; }
   .leg-circle { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
   .leg-star  { width: 10px; height: 10px; color: #c9a84c; font-size: 10px; text-align: center; line-height: 10px; flex-shrink: 0; }
 
@@ -261,13 +285,17 @@
     gap: 6px;
     margin-bottom: 6px;
     cursor: pointer;
-    padding: 3px 4px;
-    border-radius: 4px;
-    transition: background 0.1s;
+    padding: 4px 5px;
+    border-radius: 5px;
+    transition: background 0.12s, opacity 0.12s;
   }
-  .char-toggle-row:hover { background: rgba(255,255,255,0.04); }
-  .char-toggle-dot { width: 10px; height: 3px; border-radius: 2px; flex-shrink: 0; }
-  .char-toggle-name { font-size: 9.5px; color: #8fa8c8; flex: 1; }
+  .char-toggle-row:hover { background: rgba(255,255,255,0.06); }
+  .char-toggle-row.inactive { opacity: 0.38; }
+  .char-toggle-row.inactive:hover { opacity: 0.55; }
+  .char-toggle-dot { width: 12px; height: 4px; border-radius: 2px; flex-shrink: 0; transition: box-shadow 0.15s; }
+  .char-toggle-row:not(.inactive) .char-toggle-dot { box-shadow: 0 0 5px currentColor; }
+  .char-toggle-name { font-size: 9.5px; color: #8fa8c8; flex: 1; transition: color 0.12s; }
+  .char-toggle-row:not(.inactive) .char-toggle-name { color: #c8d8f0; }
   .char-toggle-check { font-size: 9px; color: #4a6fa5; }
 
   .leaflet-control-attribution { background: rgba(8,16,34,0.7) !important; color: #5a6070 !important; font-size: 8px !important; }
@@ -276,6 +304,8 @@
   .leaflet-bar { border: 1px solid #4a6fa5 !important; border-radius: 4px !important; overflow: hidden; }
   .leaflet-control-layers { font-size: 11px !important; }
   .leaflet-control-layers-label { color: #8fa8c8 !important; font-size: 10px !important; }
+  .razor-marker { cursor: pointer; }
+  .razor-marker:hover { filter: brightness(1.3); }
 </style>
 </head>
 <body>
@@ -317,19 +347,19 @@
 <div class="legend panel">
   <div class="panel-title">Legend &middot; 图例</div>
   <div class="legend-item">
-    <div class="leg-line" style="background:#e8c060;"></div>
+    <div class="leg-line" style="background:#f5d76e;"></div>
     <span>Larry · 拉里</span>
   </div>
   <div class="legend-item">
-    <div class="leg-line" style="background:#e89ac7;"></div>
+    <div class="leg-line" style="background:#f5a0c8;"></div>
     <span>Isabel · 伊莎贝尔</span>
   </div>
   <div class="legend-item">
-    <div class="leg-line" style="background:#c46a6a;"></div>
+    <div class="leg-line" style="background:#e88080;"></div>
     <span>Sophie · 苏菲</span>
   </div>
   <div class="legend-item">
-    <div class="leg-line" style="background:#6a9fd8;"></div>
+    <div class="leg-line" style="background:#6ab0f5;"></div>
     <span>Gray · 格雷</span>
   </div>
   <div class="legend-item">
@@ -541,6 +571,16 @@ var RazorMap = (function() {
 
   // ─── EVENTS ────────────────────────────────────────────────
   var EVENTS = {
+    'landor-poem': {
+      id: 'landor-poem', type: 'epigraph', significance: 'medium',
+      title: '兰德尔的诗 · Landor\'s Epigraph', title_zh: '兰德尔的诗 · Landor\'s Epigraph',
+      summary: '毛姆将英国诗人沃尔特·萨维奇·兰德（Walter Savage Landor, 1775–1874）的《老哲学家遗言》置于全书卷首，作为理解拉里精神旅程的钥匙。',
+      summary_zh: '毛姆将英国诗人沃尔特·萨维奇·兰德（Walter Savage Landor, 1775–1874）的《老哲学家遗言》置于全书卷首，作为理解拉里精神旅程的钥匙。这首诗是对存在主义精神追求的古典表达：诗人不与人争，不依附于自然或艺术之外的一切，最终在生命之火熄灭时安然离场。',
+      waypoint_id: 'geo-paris', characters: ['larry'], year: 1919, chapter: 'Ch5', pages: '卷首',
+      excerpt: 'I strove with none, for none was worth my strife;\nNature I loved, and next to Nature, Art;\nI warmed both hands before the fire of Life;\nIt sinks, and I am ready to depart.',
+      excerpt_context: 'Landor wrote this at age 72. It became the spiritual epigraph for Maugham\'s novel about Larry\'s search for meaning.',
+      analysis: '拉里正是兰德诗中"晃膀子"的实践者——他拒绝世俗成功（财富、婚姻、社会地位），在自然和艺术中寻找生命的意义，最终在精神层面完成了与"生命之火"的和解。毛姆用这首诗为整部小说设定了调性：这不是一个关于成功或失败的故事，而是一个关于如何安然离场的问题。'
+    },
     'larry-isabel-breakup': {
       id: 'larry-isabel-breakup', type: 'pivotal_conversation', significance: 'high_energy',
       title: '"晃膀子" · 伊莎贝尔与拉里的决裂', title_zh: '"晃膀子" · 伊莎贝尔与拉里的决裂',
@@ -700,7 +740,7 @@ var RazorMap = (function() {
   // ─── CHARACTER ROUTES ──────────────────────────────────────
   var ROUTES = {
     larry: {
-      color: '#e8c060', weight: 3.5, opacity: 0.85,
+      color: '#f5d76e', weight: 6, opacity: 0.9,
       coords: [
         [41.8781,-87.6298], [48.8566,2.3522], [43.2965,5.3698],
         [29.9773,32.5252], [30.0444,31.2357], [6.9271,79.8612],
@@ -712,14 +752,14 @@ var RazorMap = (function() {
       ]
     },
     isabel: {
-      color: '#e89ac7', weight: 2, opacity: 0.6, dashArray: '6,4',
+      color: '#f5a0c8', weight: 4, opacity: 0.8, dashArray: '8,5',
       coords: [
         [41.8781,-87.6298], [41.8781,-87.6298], [41.8781,-87.6298],
         [51.5074,-0.1278]
       ]
     },
     sophie: {
-      color: '#c46a6a', weight: 2.5, opacity: 0.7, dashArray: '3,5',
+      color: '#e88080', weight: 5, opacity: 0.8, dashArray: '5,6',
       coords: [
         [40.0000,-89.0000], [40.0000,-89.0000],
         [51.5074,-0.1278], [51.5074,-0.1278],
@@ -728,7 +768,7 @@ var RazorMap = (function() {
       ]
     },
     gray: {
-      color: '#6a9fd8', weight: 2, opacity: 0.5, dashArray: '4,4',
+      color: '#6ab0f5', weight: 4, opacity: 0.75, dashArray: '6,5',
       coords: [
         [41.8781,-87.6298], [41.8781,-87.6298], [41.8781,-87.6298],
         [51.5074,-0.1278]
@@ -841,13 +881,13 @@ var RazorMap = (function() {
     var radius = isHigh ? 8 : 5;
 
     var iconHtml = isHigh
-      ? '<div style="font-size:16px;color:#c9a84c;text-shadow:1px 1px 3px #000;">&#9733;</div>'
-      : '<div style="width:10px;height:10px;background:' + color + ';border-radius:50%;border:1.5px solid #fff;opacity:0.9;"></div>';
+      ? '<div style="font-size:22px;color:#c9a84c;text-shadow:0 0 8px rgba(201,168,76,0.9),0 0 16px rgba(201,168,76,0.4);">&#9733;</div>'
+      : '<div style="width:14px;height:14px;background:' + color + ';border-radius:50%;border:2px solid rgba(255,255,255,0.9);box-shadow:0 0 6px rgba(106,159,216,0.7),0 2px 4px rgba(0,0,0,0.5);"></div>';
 
     var marker = L.marker([wp.lat, wp.lng], {
       icon: L.divIcon({
         html: iconHtml,
-        className: '', iconSize: [20, 20], iconAnchor: [10, 10],
+        className: 'razor-marker', iconSize: [24, 24], iconAnchor: [12, 12],
       })
     });
 
@@ -987,7 +1027,7 @@ var RazorMap = (function() {
       var c = CHARACTERS[id];
       if (id === 'maugham') return; // maugham not in panel
       var isVisible = visibleCharacters[id];
-      html += '<div class="char-toggle-row" onclick="RazorMap.toggleRoute(\'' + id + '\')">';
+      html += '<div class="char-toggle-row' + (isVisible ? '' : ' inactive') + '" onclick="RazorMap.toggleRoute(\'' + id + '\')">';
       html += '<div class="char-toggle-dot" style="background:' + c.color + ';"></div>';
       html += '<div class="char-toggle-name">' + c.name_zh + '</div>';
       html += '<div class="char-toggle-check">' + (isVisible ? '&#9633;' : '&#9634;') + '</div>';
