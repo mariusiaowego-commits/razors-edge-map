@@ -162,10 +162,63 @@
     border-radius: 20px;
     padding: 7px 18px;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 0;
+    gap: 5px;
     font-size: 10px;
     white-space: nowrap;
+  }
+  .time-slider-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+  }
+  .time-slider-label { color: #4a5a6a; font-size: 9px; }
+  .time-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 160px;
+    height: 3px;
+    background: #2a3a5a;
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+  }
+  .time-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #c9a84c;
+    cursor: pointer;
+    box-shadow: 0 0 6px rgba(201,168,76,0.7);
+    transition: box-shadow 0.15s;
+  }
+  .time-slider::-webkit-slider-thumb:hover {
+    box-shadow: 0 0 10px rgba(201,168,76,1);
+  }
+  .time-slider::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #c9a84c;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 0 6px rgba(201,168,76,0.7);
+  }
+  .time-slider-value {
+    color: #c9a84c;
+    font-weight: bold;
+    font-size: 11px;
+    min-width: 36px;
+    text-align: center;
+  }
+  .time-ruler-btns {
+    display: flex;
+    align-items: center;
+    gap: 0;
   }
   .time-ruler span     { color: #7a8aaa; letter-spacing: 0.5px; cursor: pointer; transition: color 0.15s; padding: 0 4px; }
   .time-ruler span:hover { color: #c9a84c; }
@@ -403,7 +456,15 @@
 
 <!-- Time ruler -->
 <div class="time-ruler" id="time-ruler">
-  <span class="hint">click year to locate &middot; 点击定位</span>
+  <div class="time-slider-row">
+    <span class="time-slider-label">1919</span>
+    <input type="range" class="time-slider" id="time-slider" min="1919" max="1924" step="1" value="1919">
+    <span class="time-slider-label">1924</span>
+    <span class="time-slider-value" id="time-slider-value">1919</span>
+  </div>
+  <div class="time-ruler-btns">
+    <span class="hint">click year to locate &middot; 点击定位</span>
+  </div>
 </div>
 
 <!-- Quote panel -->
@@ -871,6 +932,7 @@ var RazorMap = (function() {
     }).bindPopup(buildSophiePopup()).addTo(map);
 
     buildTimeRuler();
+    bindSlider();
     buildCharPanel();
     buildLegend();
     rotateQuotes();
@@ -1104,10 +1166,27 @@ var RazorMap = (function() {
     years.forEach(function(yr, i) {
       if (i > 0) html += '<span class="sep">——</span>';
       var cls = (yr === 1919 || yr === 1924) ? 'year' : '';
-      html += '<span class="' + cls + '" onclick="RazorMap.flyToYear(' + yr + ')">' + yr + '</span>';
+      html += '<span class="' + cls + '" onclick="RazorMap.flyToYear(' + yr + '); RazorMap.setSliderYear(' + yr + ');">' + yr + '</span>';
     });
-    html += '<span class="hint">&nbsp;· click to locate</span>';
-    ruler.innerHTML = html;
+    ruler.querySelector('.time-ruler-btns').innerHTML = html + '<span class="hint">&nbsp;· drag slider to scrub</span>';
+  }
+
+  function setSliderYear(yr) {
+    var slider = document.getElementById('time-slider');
+    slider.value = yr;
+    document.getElementById('time-slider-value').textContent = yr;
+  }
+
+  function bindSlider() {
+    var slider = document.getElementById('time-slider');
+    slider.addEventListener('input', function() {
+      var yr = parseInt(this.value, 10);
+      document.getElementById('time-slider-value').textContent = yr;
+    });
+    slider.addEventListener('change', function() {
+      var yr = parseInt(this.value, 10);
+      RazorMap.flyToYear(yr);
+    });
   }
 
   function flyToYear(yr) {
@@ -1144,6 +1223,7 @@ var RazorMap = (function() {
     toggleEvent: toggleEvent,
     toggleRoute: toggleRoute,
     flyToYear: flyToYear,
+    setSliderYear: setSliderYear,
     rotateQuotes: rotateQuotes,
     closeQuote: closeQuote,
   };
