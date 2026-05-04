@@ -795,6 +795,17 @@ var RazorMap = (function() {
       quotes: [
         { text: "She did not ask anything of him. She had no demands, no expectations, no ideals. She was just alive.", zh: "她对他无所求。她没有要求，没有期望，没有理想。她只是活着。", chapter: "Ch8" }
       ]
+    },
+    ramakrishna: {
+      id: 'ramakrishna', name: 'Sri Ramakrishna', name_zh: '室利·罗摩克里希那',
+      color: '#e8a060', role: 'guru',
+      bio: 'Sri Ramakrishna Paramahamsa (1836–1886) was a 19th-century Bengali mystic and spiritual teacher who demonstrated that all religions lead to the same ultimate reality. His teaching synthesized Advaita Vedanta, Tantra, and Bhakti yoga. He was the guru of Swami Vivekananda, who later founded the Ramakrishna Mission.',
+      bio_zh: '室利·罗摩克里希那（1836–1886）是十九世纪孟加拉神秘主义者与灵性导师，教导所有宗教最终通向同一实在。他融合了吠檀多、谭崔和虔诚瑜伽。他的门徒辨喜成立了罗摩克里希那传教会，在特里凡得琅等地设有中心，深刻影响了拉里的印度之旅。',
+      arc: '从神秘体验 → 导师身份确立 → 门徒培养 → 永续精神传承',
+      arc_zh: '从直接的神秘体验出发，到成为导师，再到培养辨喜等门徒，最终留下一个遍及全球的精神传承。拉里在特里凡得琅通过阅读和冥想与这位已故大师产生了深刻的精神联结。',
+      motivation: 'Ramakrishna sought to experience God directly through multiple spiritual disciplines, demonstrating that all paths converge at the same divine truth.',
+      motivation_zh: '罗摩克里希那通过多种灵性修行直接体验神，示范了所有道路在神圣真理处汇合。',
+      quotes: []
     }
   };
 
@@ -848,7 +859,7 @@ var RazorMap = (function() {
       events: [],
       joint_note: null
     },
-    { id: 'geo-kashmir', lat: 34.0837, lng: 74.7973, city: 'Kashmir', city_zh: '克什米尔', country: 'India', year_start: 1922, year_end: 1922, characters: ['larry'], significance: 'enlightenment_climax', is_highlight: true,
+    { id: 'geo-kashmir', lat: 34.0837, lng: 74.7973, city: 'Kashmir', city_zh: '克什米尔', country: 'India', year_start: 1922, year_end: 1922, characters: ['larry'], significance: 'shiva_enlightenment', is_highlight: true,
       maugham: '当拉里后来向我描述他在克什米尔的经历时，他的语言变得异常谨慎，仿佛任何词语都会损害那个体验的纯粹性。"我坐在喜马拉雅山南麓的一个山洞里，我不知道过了多久——可能是几个小时，可能是几天。在某个瞬间，思考停止了。然后，有什么东西进来了——他称之为"光"，或者"力量"，或者"存在"。他停顿了一下，"我不知道怎么描述。它只能被体验。"',
       maugham_zh: '当拉里后来向我描述他在克什米尔的经历时，他的语言变得异常谨慎，仿佛任何词语都会损害那个体验的纯粹性。"我坐在喜马拉雅山南麓的一个山洞里，我不知道过了多久。在某个瞬间，思考停止了。然后，有什么东西进来了——他称之为"光"，或者"力量"，或者"存在"。"我不知道怎么描述。它只能被体验。"',
       events: ['larry-kashmir-enlightenment'],
@@ -860,13 +871,27 @@ var RazorMap = (function() {
       events: ['larry-guru-reunion'],
       joint_note: null
     },
-    { id: 'geo-anuradhapura', lat: 8.3114, lng: 80.4034, city: 'Anuradhapura', city_zh: '阿努拉德普勒', country: 'Ceylon', year_start: 1922, year_end: 1922, characters: ['larry'], significance: 'buddhist_verification', is_highlight: true,
+    { id: '
+    { id: 'geo-benares', lat: 25.3176, lng: 82.9739, city: 'Benares', city_zh: '贝纳勒斯', country: 'India', year_start: 1922, year_end: 1922, characters: ['larry','maugham'], significance: 'hindu_sacred_centre', is_highlight: true,
+      maugham: '贝纳勒斯是印度最神圣的城市——湿婆之城，十亿印度教徒的精神首都。拉里在这里的河坛（Ghat）上看恒河日出，看成千上万的信徒在圣水中洗涤灵魂，看焚烧亡者的河坛冒起的火焰与烟雾。贝纳勒斯让他看到：死亡每天在河坛上被直视，而信仰却从未动摇。这不是一个可以被"理解"的上帝——这是一个被体验的上帝。',
+      maugham_zh: '贝纳勒斯是印度最神圣的城市——湿婆之城，十亿印度教徒的精神首都。拉里在这里的河坛上看恒河日出，看成千上万的信徒在圣水中洗涤灵魂，看焚烧亡者的河坛冒起的火焰与烟雾。贝纳勒斯让他看到：死亡每天在河坛上被直视，而信仰却从未动摇。这不是一个可以被"理解"的上帝——这是一个被体验的上帝。',
+      events: [],
+      joint_note: null
+    },
+geo-anuradhapura', lat: 8.3114, lng: 80.4034, city: 'Anuradhapura', city_zh: '阿努拉德普勒', country: 'Ceylon', year_start: 1922, year_end: 1922, characters: ['larry'], significance: 'buddhist_verification', is_highlight: true,
       maugham: '拉里返回锡兰，专程前往阿努拉德普勒——那里有全世界最古老的菩提树，两千多年前佛陀的弟子在此种下它的后代。他在菩提树下静坐了七天七夜。我问他在那里发生了什么，他只是笑着说："我在那里确认了我在克什米尔已经知道的东西。"他说的"东西"是什么，他始终没有明说。',
       maugham_zh: '拉里返回锡兰，专程前往阿努拉德普勒——那里有全世界最古老的菩提树，两千多年前佛陀的弟子在此种下它的后代。他在菩提树下静坐了七天七夜。他只是笑着说："我在那里确认了我在克什米尔已经知道的东西。"',
       events: ['larry-bodhi-tree'],
       joint_note: null
     },
-    { id: 'geo-mumbai', lat: 19.0760, lng: 72.8777, city: 'Mumbai', city_zh: '孟买', country: 'India', year_start: 1923, year_end: 1923, characters: ['larry'], significance: 'departure_from_east', is_highlight: false,
+    { id: '
+    { id: 'geo-trivandrum', lat: 8.4833, lng: 76.9200, city: 'Trivandrum', city_zh: '特里凡得琅', country: 'India', year_start: 1922, year_end: 1922, characters: ['larry'], significance: 'ramakrishna_centre', is_highlight: true,
+      maugham: '特里凡得琅是罗摩克里希那传教会的重要中心——拉里在这里阅读了大量关于印度哲学的书籍，并遇到了后来对他影响深远的导师。在这座城市里，他第一次系统地接触到了"业报"（karma）和"轮回"（samsara）的教义，以及"解脱"（moksha）的概念。',
+      maugham_zh: '特里凡得琅是罗摩克里希那传教会的重要中心——拉里在这里阅读了大量关于印度哲学的书籍。在这座城市里，他第一次系统地接触到了"业报"（karma）和"轮回"（samsara）的教义，以及"解脱"（moksha）的概念。',
+      events: [],
+      joint_note: null
+    },
+geo-mumbai', lat: 19.0760, lng: 72.8777, city: 'Mumbai', city_zh: '孟买', country: 'India', year_start: 1923, year_end: 1923, characters: ['larry'], significance: 'departure_from_east', is_highlight: false,
       maugham: '拉里在孟买登上返回欧洲的轮船。他回头看了一眼印度大陆——那片给了他答案的土地。三年前他离开巴黎时是一个满腹疑问的年轻人；如今他带回三箱子笔记本和一颗完全不同的心。',
       maugham_zh: '拉里在孟买登上返回欧洲的轮船。他回头看了一眼印度大陆——那片给了他答案的土地。三年前他离开巴黎时是一个满腹疑问的年轻人；如今他带回三箱子笔记本和一颗完全不同的心。',
       events: [],
@@ -1245,7 +1270,8 @@ var RazorMap = (function() {
         [41.8781,-87.6298], [48.8566,2.3522], [43.2965,5.3698],
         [29.9773,32.5252], [30.0444,31.2357], [6.9271,79.8612],
         [13.0827,80.2707], [17.3850,78.4867], [15.5007,74.1239],
-        [34.0837,74.7973], [22.5726,88.3639], [8.3114,80.4034],
+        [34.0837,74.7973], [22.5726,88.3639], [25.3176,82.9739],
+        [8.3114,80.4034], [8.4833,76.9200],
         [19.0760,72.8777], [51.5074,-0.1278],
         [51.5074,-0.1278], [36.1391,-5.3536], [37.3891,-5.9845], [36.7201,-4.4203],
         [29.9773,32.5252]
@@ -1299,7 +1325,17 @@ var RazorMap = (function() {
     { speaker: 'larry', text: 'The prayers that are said in church — I cannot see that they are any use. Does it make you think that God is like a great person? I cannot believe that God needs man\'s flattery.', zh: '教堂里的祷告——我看不出有什么用处。上帝会去听那么多人念祷告吗？我没法相信上帝需要人的恭维。', chapter: 'Ch6', url: '' },
     { speaker: 'larry', text: 'You think a father on earth would let his children go hungry if he had the power to feed them? And yet you believe that an Almighty Father will leave His children on earth without the material and spiritual sustenance they need. It makes Him absurd.', zh: '你认为人间的父亲如果有能力给孩子食物，会让他们饿死吗？可你却相信一个万能的天父会不给他的孩子在世的物质和精神食粮。这让他显得荒唐。', chapter: 'Ch6', url: '' },
     { speaker: 'larry', text: 'I have traveled much, seen Seville, Granada, Cordoba — the churches, the paintings, the churches of Spain. The Andalusian women are something very special. They are like women nowhere else in Europe — serious, devout, with an odd wildness that has not been tamed by Christianity.', zh: '我游历甚广，看过塞维利亚、格拉纳达、科尔多瓦——教堂、绘画、西班牙的教堂。安达卢西亚的女人非常特别，她们不像欧洲其他任何地方的女人——严肃、虔诚，带着一种未被基督教驯服的奇特狂野。', chapter: 'Ch6', url: '' },
-    { speaker: 'larry', text: 'Velazquez and El Greco — they painted what they saw with their own eyes. That is why their paintings are so alive. They did not paint gods or saints; they painted human beings with a divine light.', zh: '贝拉斯科斯和艾尔·格列柯——他们画的是亲眼所见之物。这就是为什么他们的画如此生动。他们不画神或圣徒，他们画的是带有神圣光芒的人类。', chapter: 'Ch6', url: '' }
+    { speaker: 'larry', text: 'Velazquez and El Greco — they painted what they saw with their own eyes. That is why their paintings are so alive. They did not paint gods or saints; they painted human beings with a divine light.', zh: '贝拉斯科斯和艾尔·格列柯——他们画的是亲眼所见之物。这就是为什么他们的画如此生动。他们不画神或圣徒，他们画的是带有神圣光芒的人类。', chapter: 'Ch6', url: '' },
+    { speaker: 'larry', text: 'Ramakrishna taught me that a God that can be understood is not God at all. The ultimate reality is beyond all concepts and categories.', zh: '罗摩克里希那教导我：一个能够被人了解的上帝就算不上上帝。终极实在超越一切概念与范畴。', chapter: 'Ch9', url: '' },
+    { speaker: 'larry', text: 'They escaped me by shedding me; I am the wing, I am the doubt, I am the doubt, I am the song that the Brahmin sings.', zh: '他们刷掉我是他们失算；我，就是羽翼；我是怀疑者，我也是怀疑；我是婆罗门歌唱的圣诗。', chapter: 'Ch9', url: '' },
+    { speaker: 'larry', text: 'Shiva is the destroyer, but without destruction there can be no creation. The god of destruction is also the god of creation.', zh: '湿婆是毁灭者，但如果没有毁灭就不可能有创造。毁灭之神同时也是创造之神。', chapter: 'Ch10', url: '' },
+    { speaker: 'larry', text: 'According to the Vedanta, the Atman — what they call the Self and we call the soul — is distinct from the body, from the senses, from the mind and intellect. It is not born, it does not die.', zh: '根据吠陀经义，真我（阿特曼）——他们称作"自我"而我们称为灵魂的——与身体及其感觉，与心灵及其智力，都不相同。它不生，不死。', chapter: 'Ch10', url: '' },
+    { speaker: 'larry', text: 'If you want to taste sugar, you do not become sugar. You taste it by coming into contact with it. The self does not become Brahman; it realizes it has always been Brahman.', zh: '你要尝尝糖的味道，你并不要变作糖。你通过接触它来品尝它。自我不会变成梵我；它认识到自己始终就是梵我。', chapter: 'Ch10', url: '' },
+    { speaker: 'larry', text: 'Dostoevsky is the greatest novelist who ever lived. He saw deeper into the human condition than anyone else — the darkness, the suffering, the search for meaning.', zh: '陀思妥耶夫斯基是有史以来最伟大的小说家。他比任何人都更深地看透了人类处境——那黑暗，那苦难，那对意义的追寻。', chapter: 'Ch8', url: '' },
+    { speaker: 'larry', text: 'The great stone elephants at the gate of the temple in Elephanta are like nothing else in the world — they seem to be holding up not just the temple but the whole weight of the universe.', zh: '埃勒范塔神庙门口的大石象——世界上没有其他东西可以与之相比——它们看起来不仅在支撑着那座庙宇，而是在支撑着整个宇宙的重量。', chapter: 'Ch10', url: '' },
+    { speaker: 'larry', text: 'In Benares, on the ghats by the Ganges, I watched them burn the dead day after day and I thought: they do not fear death because they have looked at it so steadily that it no longer holds any terror for them.', zh: '在贝纳勒斯，恒河边的河坛上，我看着他们日复一日地焚烧亡者，我想：他们不惧怕死亡，因为他们如此稳定地直视它，以至于它对他们不再具有任何恐怖。', chapter: 'Ch10', url: '' },
+    { speaker: 'larry', text: 'To escape the wheel of rebirth — that is what they call moksha. Not to be reborn again into this world of suffering and illusion.', zh: '逃出轮回之轮——那就是他们所谓的"解脱"（moksha）。不再投胎到这个苦难与幻相的世界。', chapter: 'Ch9', url: '' },
+    { speaker: 'larry', text: 'In Travancore I found what I was looking for. The air itself seemed to vibrate with spiritual presence.', zh: '在特拉凡哥尔，我找到了我在寻找的东西。空气本身似乎就在震动着精神的存在。', chapter: 'Ch10', url: '' }
   ];
 
   // ─── STATE ─────────────────────────────────────────────────
@@ -1307,7 +1343,7 @@ var RazorMap = (function() {
   var activeQuoteIdx = -1;
   var expandedEvents = {};
   var routeLayers = {};
-  var visibleCharacters = { larry: true, isabel: true, sophie: true, gray: true, elliott: true, suzanne: false };
+  var visibleCharacters = { larry: true, isabel: true, sophie: true, gray: true, elliott: true, suzanne: false, ramakrishna: false };
   var activeWpId = null;   // currently open waypoint
   var activeCharId = null;  // last clicked character route
   var activeCharFilter = null; // character filter for status/quote panels
