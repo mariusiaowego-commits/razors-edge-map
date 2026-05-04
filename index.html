@@ -1531,13 +1531,17 @@ var RazorMap = (function() {
   }
 
   function toggleRoute(charId) {
+    alert('toggleRoute(' + charId + ') called! visible now=' + visibleCharacters[charId]);
     visibleCharacters[charId] = !visibleCharacters[charId];
     if (visibleCharacters[charId]) {
       addRoute(charId);
+      alert('addRoute done. routeLayers['' + charId + '']=' + !!routeLayers[charId]);
     } else {
+      alert('will remove. routeLayers['' + charId + '']=' + !!routeLayers[charId] + ' type=' + typeof routeLayers[charId]);
       if (routeLayers[charId]) {
         map.removeLayer(routeLayers[charId]);
         delete routeLayers[charId];
+        alert('removed. now routeLayers['' + charId + '']=' + !!routeLayers[charId]);
       }
     }
     buildCharPanel();
