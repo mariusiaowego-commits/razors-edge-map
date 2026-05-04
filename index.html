@@ -6,14 +6,31 @@
 <title>The Razor's Edge — Literary Map 刀锋文学地图</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Source+Sans+3:wght@400;600&display=swap">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
+  :root {
+    --font-serif: 'EB Garamond', Georgia, 'Times New Roman', serif;
+    --font-sans: 'Source Sans 3', 'Courier New', monospace;
+    --font-mono: 'Courier New', monospace;
+    --type-xs: 8px;
+    --type-sm: 9.5px;
+    --type-base: 11px;
+    --type-md: 13px;
+    --type-lg: 16px;
+    --type-xl: 22px;
+    --type-xxl: 28px;
+  }
+
   body {
     background: #1a1a2e;
-    font-family: 'Courier New', monospace;
+    font-family: var(--font-sans);
     color: #e8d5b0;
     min-height: 100vh;
+    font-size: var(--type-base);
+    line-height: 1.5;
   }
 
   #map { width: 100vw; height: 100vh; }
@@ -32,8 +49,22 @@
     text-align: center;
     pointer-events: none;
   }
-  .title-banner h1 { font-size: 15px; color: #c9a84c; letter-spacing: 3px; text-transform: uppercase; }
-  .title-banner p  { font-size: 10px; color: #9a8870; margin-top: 3px; letter-spacing: 1px; }
+  .title-banner h1 {
+    font-family: var(--font-serif);
+    font-size: var(--type-xl);
+    font-weight: 400;
+    color: #c9a84c;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+  .title-banner p {
+    font-family: var(--font-sans);
+    font-size: var(--type-xs);
+    color: #9a8870;
+    margin-top: 3px;
+    letter-spacing: 1px;
+    font-style: italic;
+  }
 
   /* ── Panels shared ── */
   .panel {
@@ -58,7 +89,19 @@
     margin-bottom: 10px;
     border-bottom: 1px solid #2a3a5a;
     padding-bottom: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
+  .panel-close {
+    font-size: 16px;
+    color: #4a6a9a;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 2px;
+    transition: color 0.15s;
+  }
+  .panel-close:hover { color: #c9a84c; }
 
   /* ── Character panel — left ── */
   .char-panel {
@@ -272,16 +315,15 @@
   }
   .legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 9.5px; color: #8fa8c8; cursor: pointer; transition: color 0.15s; }
   .legend-item:hover { color: #c8dff5; }
+  .legend-item.active { color: #e8d5b0; }
+  .legend-item.inactive { opacity: 0.4; }
   .leg-line { width: 24px; height: 4px; border-radius: 2px; flex-shrink: 0; }
   .leg-circle { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
   .leg-star  { width: 10px; height: 10px; color: #c9a84c; font-size: 10px; text-align: center; line-height: 10px; flex-shrink: 0; }
 
   /* ── Time ruler ── */
   .time-ruler {
-    position: absolute;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
+    position: relative;
     z-index: 1000;
     background: rgba(8, 16, 34, 0.9);
     border: 1px solid #3a4a6a;
@@ -291,7 +333,7 @@
     flex-direction: column;
     align-items: center;
     gap: 5px;
-    font-size: 10px;
+    font-size: var(--type-xs);
     white-space: nowrap;
   }
   .time-slider-row {
@@ -358,16 +400,25 @@
     border: 1px solid #c9a84c !important;
     color: #e8d5b0;
     border-radius: 8px;
-    max-width: 520px !important;
-    width: 460px !important;
+    max-width: min(460px, 90vw) !important;
+    width: min(460px, 90vw) !important;
   }
   .leaflet-popup-content { margin: 14px 16px !important; }
   .leaflet-popup-tip { background: rgba(6, 14, 32, 0.97) !important; }
   .leaflet-popup-close-button { color: #c9a84c !important; font-size: 18px !important; top: 8px !important; right: 10px !important; }
 
-  .popup-header { margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #2a3a5a; }
-  .popup-title { color: #c9a84c; font-size: 15px; font-weight: bold; margin-bottom: 4px; letter-spacing: 0.5px; }
-  .popup-meta  { font-size: 10px; color: #8fa8c8; }
+  .popup-title {
+    font-family: var(--font-serif);
+    font-size: var(--type-md);
+    font-weight: 400;
+    color: #c9a84c;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #2a3a5a;
+  }
+  .popup-meta  { font-size: var(--type-sm); color: #8fa8c8; font-family: var(--font-sans); }
+  .popup-header { } /* wrapper only, styles on .popup-title + .popup-meta directly */
   .popup-body  { max-height: 380px; overflow-y: auto; }
   .popup-body::-webkit-scrollbar { width: 4px; }
   .popup-body::-webkit-scrollbar-thumb { background: #4a6fa5; border-radius: 2px; }
@@ -376,8 +427,8 @@
   .popup-tabs { display: flex; border-bottom: 1px solid #2a3a5a; margin-bottom: 10px; }
   .popup-tab-btn {
     background: none; border: none;
-    color: #5a6a7a; font-family: 'Courier New', monospace;
-    font-size: 11px; padding: 5px 14px;
+    color: #5a6a7a; font-family: var(--font-sans);
+    font-size: var(--type-base); padding: 5px 14px;
     cursor: pointer; border-bottom: 2px solid transparent;
     transition: color 0.15s, border-color 0.15s;
     letter-spacing: 0.5px;
@@ -388,7 +439,7 @@
   .popup-tab-content.active { display: block; }
 
   /* Tab content */
-  .tab-section-title { font-size: 10px; color: #c9a84c; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px; }
+  .tab-section-title { font-size: var(--type-sm); font-family: var(--font-serif); color: #c9a84c; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px; font-weight: 400; }
   .popup-geo      { color: #c8b898; font-size: 12px; line-height: 1.75; }
   .popup-geo p    { margin-bottom: 10px !important; }
   .popup-event-summary { color: #d4c49a; font-size: 12px; line-height: 1.7; margin-bottom: 10px; }
@@ -518,14 +569,15 @@
 
 <!-- Character panel — left -->
 <div class="char-panel panel" id="char-panel">
-  <div class="panel-title">Characters &middot; 角色</div>
+  <div class="panel-title">Characters &middot; 角色<span class="panel-close" onclick="RazorMap.closeCharPanel()">&times;</span></div>
   <div id="char-list">Loading...</div>
 </div>
 
 <!-- Status Objects panel — right side -->
 <div class="status-panel" id="status-panel">
-  <div class="popup-title" style="font-size:11px;border-bottom:1px solid #2a3a5a;padding-bottom:8px;margin-bottom:10px;">
-    <span style="color:#c9a84c;">&#9670;</span> Status Objects &middot; 面子之物
+  <div class="popup-title" style="font-size:11px;border-bottom:1px solid #2a3a5a;padding-bottom:8px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;">
+    <span><span style="color:#c9a84c;">&#9670;</span> Status Objects &middot; 面子之物</span>
+    <span class="panel-close" onclick="RazorMap.toggleStatusPanel()" style="font-size:16px;color:#4a6a9a;cursor:pointer;">&times;</span>
   </div>
   <div id="status-list">Loading...</div>
 </div>
@@ -533,35 +585,35 @@
 <!-- Legend -->
   <div class="legend panel">
     <div class="panel-title">Legend &middot; 图例</div>
-    <div class="legend-item" onclick="RazorMap.toggleRoute('larry')">
+    <div class="legend-item" id="leg-larry" onclick="RazorMap.toggleRoute('larry')">
       <div class="leg-line" style="background:#f5d76e;"></div>
       <span>Larry · 拉里</span>
     </div>
-    <div class="legend-item" onclick="RazorMap.toggleRoute('isabel')">
+    <div class="legend-item" id="leg-isabel" onclick="RazorMap.toggleRoute('isabel')">
       <div class="leg-line" style="background:#f5a0c8;"></div>
       <span>Isabel · 伊莎贝尔</span>
     </div>
-    <div class="legend-item" onclick="RazorMap.toggleRoute('sophie')">
+    <div class="legend-item" id="leg-sophie" onclick="RazorMap.toggleRoute('sophie')">
       <div class="leg-line" style="background:#e88080;"></div>
       <span>Sophie · 苏菲</span>
     </div>
-    <div class="legend-item" onclick="RazorMap.toggleRoute('gray')">
+    <div class="legend-item" id="leg-gray" onclick="RazorMap.toggleRoute('gray')">
       <div class="leg-line" style="background:#6ab0f5;"></div>
       <span>Gray · 格雷</span>
     </div>
-    <div class="legend-item" onclick="RazorMap.toggleRoute('elliott')">
+    <div class="legend-item" id="leg-elliott" onclick="RazorMap.toggleRoute('elliott')">
       <div class="leg-line" style="background:#7fc97f;"></div>
       <span>Elliott · 埃利奥特</span>
     </div>
-    <div class="legend-item" onclick="RazorMap.showEventCluster('high_energy')">
+    <div class="legend-item" id="leg-high_energy" onclick="RazorMap.showEventCluster('high_energy')">
       <div class="leg-star">★</div>
       <span>High-Energy Scene · 高能情节</span>
     </div>
-    <div class="legend-item" onclick="RazorMap.toggleRoute('maugham')">
+    <div class="legend-item" id="leg-maugham" onclick="RazorMap.toggleRoute('maugham')">
       <div class="leg-circle" style="background:#9b8df0;"></div>
       <span>Maugham Narrative · 毛姆视角</span>
     </div>
-    <div class="legend-item" onclick="RazorMap.showEventCluster('sophie_disappearance')">
+    <div class="legend-item" id="leg-sophie_disappearance" onclick="RazorMap.showEventCluster('sophie_disappearance')">
       <div class="leg-circle" style="background:#c46a6a;"></div>
       <span>Sophie Missing · 苏菲失踪</span>
     </div>
@@ -570,18 +622,20 @@
     </div>
   </div>
 
-<!-- Time ruler -->
-<div class="time-ruler" id="time-ruler">
+<!-- Time ruler + brief container -->
+<div style="position:absolute;bottom:30px;left:50%;transform:translateX(-50%);z-index:1000;display:flex;flex-direction:column;align-items:center;gap:0;">
+  <div class="time-ruler" id="time-ruler">
+    <div class="time-slider-row">
+      <span class="time-slider-label">1919</span>
+      <input type="range" class="time-slider" id="time-slider" min="1919" max="1929" step="1" value="1919">
+      <span class="time-slider-label">1929</span>
+      <span class="time-slider-value" id="time-slider-value">1919</span>
+    </div>
+    <div class="time-ruler-btns">
+      <span class="hint">click year to locate &middot; 点击定位</span>
+    </div>
+  </div>
   <div class="timeline-brief" id="timeline-brief"></div>
-  <div class="time-slider-row">
-    <span class="time-slider-label">1919</span>
-    <input type="range" class="time-slider" id="time-slider" min="1919" max="1929" step="1" value="1919">
-    <span class="time-slider-label">1929</span>
-    <span class="time-slider-value" id="time-slider-value">1919</span>
-  </div>
-  <div class="time-ruler-btns">
-    <span class="hint">click year to locate &middot; 点击定位</span>
-  </div>
 </div>
 
 <!-- Quote panel -->
@@ -1222,6 +1276,7 @@ var RazorMap = (function() {
     buildCharPanel();
     buildStatusPanel();
     buildLegend();
+    syncLegendState();
     showContextQuote();
   }
 
@@ -1251,6 +1306,7 @@ var RazorMap = (function() {
       }
     }
     buildCharPanel();
+    syncLegendState();
     // Update context filter to this character's objects
     activeCharFilter = [charId];
     activeWpId = null;
@@ -1553,6 +1609,11 @@ var RazorMap = (function() {
     showContextQuote();
   }
 
+  function closeCharPanel() {
+    var panel = document.getElementById('char-panel');
+    panel.style.display = 'none';
+  }
+
   function toggleStatusPanel() {
     var panel = document.getElementById('status-panel');
     panel.classList.toggle('open');
@@ -1568,6 +1629,19 @@ var RazorMap = (function() {
   }
 
   // ─── LEGEND ─────────────────────────────────────────────────
+  function syncLegendState() {
+    ['larry','isabel','sophie','gray','elliott','maugham'].forEach(function(id) {
+      var el = document.getElementById('leg-' + id);
+      if (!el) return;
+      el.classList.remove('active', 'inactive');
+      if (visibleCharacters[id]) {
+        el.classList.add('active');
+      } else {
+        el.classList.add('inactive');
+      }
+    });
+  }
+
   function buildLegend() {
     // legend is pure HTML/CSS, no JS needed
   }
@@ -1754,6 +1828,7 @@ var RazorMap = (function() {
     buildTimelineBrief: buildTimelineBrief,
     showContextQuote: showContextQuote,
     closeQuote: closeQuote,
+    closeCharPanel: closeCharPanel,
     toggleStatusPanel: toggleStatusPanel,
     toggleStatusCard: toggleStatusCard,
     updateContextPanels: updateContextPanels,
