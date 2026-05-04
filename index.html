@@ -350,7 +350,7 @@
     border-color: #3a5a8a;
   }
   .legend::before {
-    content: '点击地图标记点查看详情';
+    content: '点击人物名称切换路线显示';
     display: block;
     font-size: 8px;
     color: #4a6a9a;
@@ -678,7 +678,7 @@
 
 <!-- Legend -->
   <div class="legend panel">
-    <div class="panel-title">Legend &middot; 图例 <span onclick="RazorMap.openCharPanel()" style="font-size:11px;cursor:pointer;color:#c9a84c;float:right;" title="打开人物面板">&#9776; 角色</span></div>
+    <div class="panel-title">&#9776; 路线图例 <span onclick="RazorMap.openCharPanel()" style="font-size:9px;cursor:pointer;color:#c9a84c;float:right;" title="打开角色面板">&#9776; 角色 &raquo;</span></div>
     <div class="legend-item" id="leg-larry" onclick="RazorMap.toggleRoute('larry')">
       <div class="leg-line" style="background:#f5d76e;"></div>
       <span>Larry · 拉里</span>
@@ -1421,7 +1421,7 @@ var RazorMap = (function() {
   var sophieVoyageLayer = null;
   var sophieVoyageShipMarkers = {};
   var sophieVoyageActive = false;
-  var visibleCharacters = { larry: true, isabel: true, sophie: true, gray: true, elliott: true, suzanne: false };
+  var visibleCharacters = { larry: true, isabel: true, sophie: true, gray: true, elliott: true, suzanne: true };
   var activeWpId = null;   // currently open waypoint
   var activeCharId = null;  // last clicked character route
   var activeCharFilter = null; // character filter for status/quote panels
