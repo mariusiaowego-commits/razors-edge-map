@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="mul">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -41,7 +41,7 @@
     top: 12px;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 1000;
+    z-index: 900;
     background: rgba(10, 20, 40, 0.92);
     border: 1px solid #c9a84c;
     border-radius: 6px;
@@ -77,6 +77,14 @@
     box-shadow: 0 4px 20px rgba(0,0,0,0.5);
     max-height: calc(100vh - 160px);
     overflow-y: auto;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .panel.panel-hidden {
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
   }
   .panel::-webkit-scrollbar { width: 4px; }
   .panel::-webkit-scrollbar-track { background: #0a1428; }
@@ -104,23 +112,45 @@
   .panel-close:hover { color: #c9a84c; }
 
   /* ── Character panel — left ── */
-  .char-panel {
-    display: block;
+  .sidebar {
     top: 80px;
     left: 12px;
     width: 220px;
     border-color: #3a5a8a;
+    padding: 10px 12px;
   }
-  .char-panel::before {
-    content: '点击角色切换路线 · CLICK TO TOGGLE';
-    display: block;
-    font-size: 8px;
-    color: #4a6a9a;
-    letter-spacing: 1px;
-    text-align: center;
-    margin-bottom: 6px;
+  .sidebar-tabs {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #2a3a5a;
     padding-bottom: 6px;
-    border-bottom: 1px dashed #2a3a5a;
+  }
+  .sidebar-tab {
+    font-size: 10px;
+    color: #6a7a8a;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: 2px 8px;
+    border-radius: 4px;
+    transition: color 0.15s, background 0.15s;
+  }
+  .sidebar-tab:hover { color: #9ac0e0; }
+  .sidebar-tab.active {
+    color: #c9a84c;
+    background: rgba(201,168,76,0.1);
+  }
+  .sidebar-content {
+    max-height: calc(100vh - 220px);
+    overflow-y: auto;
+  }
+  .sidebar-content::-webkit-scrollbar { width: 3px; }
+  .sidebar-content::-webkit-scrollbar-track { background: transparent; }
+  .sidebar-content::-webkit-scrollbar-thumb { background: #3a5a8a; border-radius: 2px; }
+  .sidebar .panel-close {
+    margin-left: auto;
   }
   .char-item {
     margin-bottom: 8px;
@@ -131,19 +161,9 @@
   .char-item:last-child { border-bottom: none; }
   .c-name { font-size: 11px; color: #e8d5b0; font-weight: bold; letter-spacing: 1px; }
   .c-zh   { font-size: 10px; color: #8fa8c8; margin-top: 1px; }
-  .c-desc { font-size: 9px; color: #6a7a8a; margin-top: 2px; line-height: 1.4; }
+  .c-desc { font-size: 10px; color: #8a9aaa; margin-top: 2px; line-height: 1.4; }
   .c-route { font-size: 9px; color: #4a6fa5; margin-top: 2px; }
   .c-route span { display: inline-block; width: 8px; height: 3px; border-radius: 2px; margin-right: 3px; vertical-align: middle; }
-  .char-detail {
-    margin-top: 6px;
-    border-top: 1px solid #1e2e48;
-    padding-top: 6px;
-    font-size: 9.5px;
-    color: #9a9a8a;
-    line-height: 1.55;
-    display: none;
-  }
-  .char-detail.expanded { display: block; }
   .char-bio strong, .char-arc strong, .char-motivation strong { color: #c9a84c; }
   .char-quotes blockquote {
     color: #d4c49a;
@@ -159,17 +179,6 @@
     color: #4a6fa5;
     margin-top: 3px;
   }
-
-  /* ── Poem panel ── */
-  .poem-panel {
-    bottom: 80px;
-    left: 12px;
-    width: 210px;
-  }
-  .poem-title { font-size: 10px; color: #c9a84c; letter-spacing: 1px; margin-bottom: 8px; }
-  .poem-en { font-size: 10px; color: #c8b898; line-height: 1.7; font-style: italic; margin-bottom: 8px; }
-  .poem-zh { font-size: 9.5px; color: #9a8a78; line-height: 1.6; margin-bottom: 8px; }
-  .poem-src { font-size: 8.5px; color: #5a6a7a; }
 
   /* ── Timeline brief popup ── */
   .timeline-brief {
@@ -197,24 +206,9 @@
   .timeline-brief-dot { color: #c9a84c; flex-shrink: 0; margin-top: 2px; }
   .timeline-brief-location { color: #8ab0d0; flex-shrink: 0; min-width: 48px; margin-top: 2px; }
   .timeline-brief-text { color: #c8b898; }
-  .timeline-brief-empty { font-size: 9.5px; color: #5a6a7a; text-align: center; padding: 4px 0; }
+  .timeline-brief-empty { font-size: 9.5px; color: #7a8a9a; text-align: center; padding: 4px 0; }
 
   /* ── Status Objects panel — right side, above legend ── */
-  .status-panel {
-    display: none;
-    position: absolute;
-    bottom: 300px;
-    right: 12px;
-    width: 260px;
-    max-height: calc(100vh - 400px);
-    overflow-y: auto;
-    background: rgba(8, 16, 34, 0.96);
-    border: 1px solid #3a5a8a;
-    border-radius: 12px;
-    padding: 12px;
-    z-index: 800;
-  }
-  .status-panel.open { display: block; }
   .status-card {
     border: 1px solid #1e2e48;
     border-radius: 8px;
@@ -324,7 +318,7 @@
   }
   .status-card-detail {
     font-size: 9px;
-    color: #5a6a7a;
+    color: #7a8a9a;
     line-height: 1.6;
     border-top: 1px dashed #1e2e48;
     padding-top: 6px;
@@ -343,25 +337,7 @@
   }
 
   /* ── Legend ── */
-  .legend {
-    bottom: 80px;
-    left: 12px;
-    width: 160px;
-    border-color: #3a5a8a;
-    z-index: 900;
-  }
-  .legend::before {
-    content: '点击人物名称切换路线显示';
-    display: block;
-    font-size: 8px;
-    color: #4a6a9a;
-    letter-spacing: 0.5px;
-    text-align: center;
-    margin-bottom: 6px;
-    padding-bottom: 6px;
-    border-bottom: 1px dashed #2a3a5a;
-  }
-  .legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 9.5px; color: #8fa8c8; cursor: pointer; transition: color 0.15s, opacity 0.15s; padding: 2px 3px; border-radius: 3px; }
+  .legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 10.5px; color: #8fa8c8; cursor: pointer; transition: color 0.15s, opacity 0.15s; padding: 2px 3px; border-radius: 3px; }
   .legend-item:hover { color: #c8dff5; background: rgba(255,255,255,0.05); }
   .legend-item.active { color: #e8d5b0; font-weight: bold; }
   .legend-item.inactive { opacity: 0.35; }
@@ -372,7 +348,7 @@
   /* ── Time ruler ── */
   .time-ruler {
     position: relative;
-    z-index: 1000;
+    z-index: 1100;
     background: rgba(8, 16, 34, 0.9);
     border: 1px solid #3a4a6a;
     border-radius: 20px;
@@ -390,7 +366,7 @@
     gap: 8px;
     width: 100%;
   }
-  .time-slider-label { color: #4a5a6a; font-size: 9px; }
+  .time-slider-label { color: #6a7a8a; font-size: 9px; }
   .time-slider {
     -webkit-appearance: none;
     appearance: none;
@@ -440,7 +416,7 @@
   .time-ruler span:hover { color: #c9a84c; }
   .time-ruler .year    { color: #c9a84c; font-weight: bold; margin: 0 5px; }
   .time-ruler .sep     { color: #3a4a6a; margin: 0 6px; }
-  .time-ruler .hint    { font-size: 8px; color: #4a5a6a; margin-left: 10px; }
+  .time-ruler .hint    { font-size: 8px; color: #6a7a8a; margin-left: 10px; }
 
   /* ── Popup ── */
   .leaflet-popup-content-wrapper {
@@ -466,7 +442,6 @@
     border-bottom: 1px solid #2a3a5a;
   }
   .popup-meta  { font-size: var(--type-sm); color: #8fa8c8; font-family: var(--font-sans); }
-  .popup-header { } /* wrapper only, styles on .popup-title + .popup-meta directly */
   .popup-body  { max-height: 380px; overflow-y: auto; }
   .popup-body::-webkit-scrollbar { width: 4px; }
   .popup-body::-webkit-scrollbar-thumb { background: #4a6fa5; border-radius: 2px; }
@@ -475,7 +450,7 @@
   .popup-tabs { display: flex; border-bottom: 1px solid #2a3a5a; margin-bottom: 10px; }
   .popup-tab-btn {
     background: none; border: none;
-    color: #5a6a7a; font-family: var(--font-sans);
+    color: #7a8a9a; font-family: var(--font-sans);
     font-size: var(--type-base); padding: 5px 14px;
     cursor: pointer; border-bottom: 2px solid transparent;
     transition: color 0.15s, border-color 0.15s;
@@ -509,7 +484,7 @@
   .popup-quote-block { margin: 10px 0; padding: 10px; background: rgba(74,111,165,0.1); border-radius: 6px; border-left: 3px solid #4a6fa5; }
   .popup-quote-text { color: #d4c49a; font-size: 12px; font-style: italic; line-height: 1.7; margin-bottom: 6px; }
   .popup-quote-meta { font-size: 9px; color: #6a9fd8; }
-  .popup-empty      { color: #4a5a6a; font-size: 11px; font-style: italic; }
+  .popup-empty      { color: #6a7a8a; font-size: 11px; font-style: italic; }
 
   .popup-maugham {
     background: rgba(155,141,240,0.08);
@@ -554,7 +529,7 @@
   .quote-src  { font-size: 9px; color: #6a9fd8; }
   .quote-url  { display: inline-block; font-size: 9px; color: #6a9fd8; text-decoration: none; border-bottom: 1px solid #3a5a8a; margin-top: 4px; }
   .quote-url:hover { color: #c9a84c; border-bottom-color: #c9a84c; }
-  .quote-close { float: right; font-size: 14px; color: #5a6a7a; cursor: pointer; line-height: 1; }
+  .quote-close { float: right; font-size: 14px; color: #7a8a9a; cursor: pointer; line-height: 1; }
   .quote-close:hover { color: #c9a84c; }
 
   /* Character route toggle */
@@ -591,6 +566,45 @@
   }
   .char-toggle-row:not(.inactive) .char-toggle-name { color: #c8d8f0; font-weight: bold; }
   .char-toggle-check { font-size: 9px; color: #4a6fa5; }
+  .char-detail {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+    padding: 0 8px;
+    background: rgba(10,20,40,0.5);
+    border-radius: 0 0 4px 4px;
+  }
+  .char-detail.expanded {
+    max-height: 300px;
+    padding: 8px;
+  }
+  .char-detail-role {
+    font-size: 9px;
+    color: #c9a84c;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .char-detail-bio {
+    font-size: 10px;
+    color: #8fa8c8;
+    line-height: 1.6;
+    margin-bottom: 4px;
+  }
+  .char-detail-arc {
+    font-size: 9px;
+    color: #6a8aaa;
+    line-height: 1.5;
+    font-style: italic;
+  }
+  .char-expand-btn {
+    font-size: 8px;
+    color: #4a6fa5;
+    cursor: pointer;
+    margin-left: 4px;
+    transition: transform 0.2s;
+  }
+  .char-expand-btn.expanded { transform: rotate(90deg); }
   .char-toggle-actions {
     display: flex;
     gap: 6px;
@@ -642,6 +656,47 @@
     border-color: #c9a84c;
     background: rgba(10,20,40,0.85);
   }
+
+  /* Keyboard shortcuts hint */
+  .keyboard-hints {
+    position: fixed;
+    bottom: 12px;
+    right: 12px;
+    z-index: 900;
+    display: flex;
+    gap: 10px;
+    padding: 6px 10px;
+    background: rgba(10, 18, 36, 0.85);
+    border: 1px solid #2a3a5a;
+    border-radius: 6px;
+    backdrop-filter: blur(4px);
+  }
+  .kbd-hint {
+    font-size: 11px;
+    color: #9ac0e0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  /* ── Focus styles for keyboard accessibility ── */
+  *:focus-visible { outline: 2px solid #c9a84c; outline-offset: 2px; }
+  .sidebar-tab:focus-visible, .legend-item:focus-visible, .char-toggle-row:focus-visible {
+    outline: 2px solid #c9a84c;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  .kbd-hint kbd {
+    display: inline-block;
+    padding: 2px 6px;
+    font-size: 10px;
+    font-family: monospace;
+    color: #c9a84c;
+    background: rgba(201, 168, 76, 0.1);
+    border: 1px solid #3a5a8a;
+    border-radius: 3px;
+    min-width: 16px;
+    text-align: center;
+  }
 </style>
 </head>
 <body>
@@ -653,34 +708,14 @@
 </div>
 
 <!-- Character panel — left -->
-<div class="char-panel panel" id="char-panel">
-  <div class="panel-title">Characters &middot; 角色<span class="panel-close" onclick="RazorMap.closeCharPanel()">&times;</span></div>
-  <div id="char-list">Loading...</div>
-</div>
-
-<!-- Status Objects panel — right side -->
-<div class="status-panel" id="status-panel">
-  <div class="popup-title" style="font-size:11px;border-bottom:1px solid #2a3a5a;padding-bottom:8px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;">
-    <span><span style="color:#c9a84c;">&#9670;</span> Status Objects &middot; 面子之物</span>
-    <span class="panel-close" onclick="RazorMap.toggleStatusPanel()" style="font-size:16px;color:#4a6a9a;cursor:pointer;">&times;</span>
+<!-- Unified Sidebar: Routes + Characters -->
+<div class="sidebar panel" id="sidebar">
+  <div class="sidebar-tabs">
+    <div class="sidebar-tab active" id="tab-routes" onclick="RazorMap.switchSidebarTab('routes')">Routes</div>
+    <div class="sidebar-tab" id="tab-characters" onclick="RazorMap.switchSidebarTab('characters')">Characters</div>
+    <span class="panel-close" onclick="RazorMap.closeSidebar()">&times;</span>
   </div>
-  <div id="status-list">Loading...</div>
-</div>
-
-<!-- Status Objects Modal — full catalog browser -->
-<div id="status-modal-overlay" onclick="if(event.target===this)RazorMap.closeStatusModal()">
-  <div id="status-modal">
-    <div class="modal-hdr">
-      <h3>&#9670; Status Objects &middot; 面子之物 — Complete Catalog</h3>
-      <span class="panel-close" onclick="RazorMap.closeStatusModal()" style="font-size:20px;color:#4a6a9a;cursor:pointer;">&times;</span>
-    </div>
-    <div class="modal-body" id="status-modal-grid"></div>
-  </div>
-</div>
-
-<!-- Legend -->
-  <div class="legend panel">
-    <div class="panel-title">&#9776; 路线图例 <span onclick="RazorMap.openCharPanel()" style="font-size:9px;cursor:pointer;color:#c9a84c;float:right;" title="打开角色面板">&#9776; 角色 &raquo;</span></div>
+  <div class="sidebar-content" id="tab-content-routes">
     <div class="legend-item" id="leg-larry" onclick="RazorMap.toggleRoute('larry')">
       <div class="leg-line" style="background:#f5d76e;"></div>
       <span>Larry · 拉里</span>
@@ -721,9 +756,24 @@
       <button onclick="RazorMap.openStatusModal()" style="background:none;border:1px solid #3a5a8a;border-radius:6px;padding:5px 10px;color:#8ab0d0;font-size:9px;cursor:pointer;width:100%;">&#9670; 面子之物 Status Objects</button>
     </div>
   </div>
+  <div class="sidebar-content" id="tab-content-characters" style="display:none;">
+    <div id="char-list">Loading...</div>
+  </div>
+</div>
+
+<!-- Status Objects Modal — full catalog browser -->
+<div id="status-modal-overlay" onclick="if(event.target===this)RazorMap.closeStatusModal()">
+  <div id="status-modal">
+    <div class="modal-hdr">
+      <h3>&#9670; Status Objects &middot; 面子之物 — Complete Catalog</h3>
+      <span class="panel-close" onclick="RazorMap.closeStatusModal()" style="font-size:20px;color:#4a6a9a;cursor:pointer;">&times;</span>
+    </div>
+    <div class="modal-body" id="status-modal-grid"></div>
+  </div>
+</div>
 
 <!-- Time ruler + brief container -->
-<div style="position:absolute;bottom:30px;left:50%;transform:translateX(-50%);z-index:1000;display:flex;flex-direction:column;align-items:center;gap:0;">
+<div style="position:absolute;bottom:30px;left:50%;transform:translateX(-50%);z-index:1100;display:flex;flex-direction:column;align-items:center;gap:0;">
   <div class="time-ruler" id="time-ruler">
     <div class="time-slider-row">
       <span class="time-slider-label">1919</span>
@@ -749,6 +799,14 @@
 
 <!-- Map -->
 <div id="map"></div>
+
+<!-- Keyboard shortcuts hint -->
+<div class="keyboard-hints" id="keyboard-hints">
+  <span class="kbd-hint"><kbd>Q</kbd> Quote</span>
+  <span class="kbd-hint"><kbd>L</kbd> Routes</span>
+  <span class="kbd-hint"><kbd>C</kbd> Characters</span>
+  <span class="kbd-hint"><kbd>Esc</kbd> Close</span>
+</div>
 
 <script>
 // ═══════════════════════════════════════════════════════════════
@@ -795,7 +853,7 @@ var RazorMap = (function() {
     },
     sophie: {
       id: 'sophie', name: 'Sophie Warren', name_zh: '苏菲·沃伦',
-      color: '#c46a6a', role: 'tragic_counterpoint',
+      color: '#e88080', role: 'tragic_counterpoint',
       image_query: 'haunted young woman 1920s dark circles eyes grief beauty lost expression literary portrait',
       bio_zh: '拉里的童年好友。车祸夺走丈夫和儿子后彻底沉沦。拉里在伦敦找到她，带她登上邮轮试图拯救，但在苏伊士神秘失踪，据推测已溺亡。',
       arc: '幸福家庭（1919）→ 车祸、丧夫丧子 → 沉沦酒精（1920-1923）→ 伦敦被找到 → 航海拯救 → 苏伊士失踪（1924）',
@@ -817,10 +875,10 @@ var RazorMap = (function() {
       quotes: []
     },
     elliott: {
-      id: 'elliott', name: 'Elliott Randolph', name_zh: '埃利奥特·兰道夫',
+      id: 'elliott', name: 'Elliott Templeton', name_zh: '埃利奥特·坦普尔顿',
       color: '#7fc97f', role: 'comic_relief',
-      bio: "Elliott is Larry's uncle — a wealthy American art dealer living in Europe, obsessed with high society. He is shallow and snobbish, but genuinely kind to Larry. His social status fades over time. He dies in Nice, forgotten by the aristocracy that once embraced him, finding unexpected peace in Catholic faith before the end.",
-      bio_zh: '埃利奥特·兰道夫是拉里的舅舅——一位住在欧洲的美国艺术品商人，痴迷上流社会。浅薄势利，但对拉里真心友善。晚年社会地位衰落，临终前在尼斯的天主教信仰中找到意外的安宁，彼时那些曾让他引以为傲的贵族关系早已将他遗忘。',
+      bio: "Elliott is Isabel's uncle — a wealthy American art dealer living in Europe, obsessed with high society. He is shallow and snobbish, but genuinely kind. His social status fades over time as the aristocratic world he devoted his life to moves on without him. He dies in Nice, forgotten by the aristocratic world that once embraced him, finding unexpected peace in Catholic faith before the end.",
+      bio_zh: '埃利奥特·坦普尔顿是伊莎贝尔的舅舅——一位住在欧洲的美国艺术品商人，痴迷上流社会。浅薄势利，但真心善良。晚年社会地位衰落，临终前在尼斯的天主教信仰中找到意外的安宁，彼时那些曾让他引以为傲的贵族关系早已将他遗忘。',
       arc: '欧洲社交名流（1919-1929）→ 地位衰落 → 孤独病重（尼斯） → 临终前找到真正的信仰',
       arc_zh: '追求了一辈子社会地位，最终被贵族圈子遗忘，却在尼斯临终时在宗教中找到了真正的安宁——这是毛姆最深刻的讽刺。',
       quotes: []
@@ -853,7 +911,7 @@ var RazorMap = (function() {
 
   // ─── WAYPOINTS ────────────────────────────────────────────
   var WAYPOINTS = [
-    { id: 'geo-paris', lat: 48.8566, lng: 2.3522, city: 'Paris', city_zh: '巴黎', country: 'France', year_start: 1919, year_end: 1920, characters: ['larry','isabel','maugham','elliott'], significance: 'journey_origin', is_highlight: true,
+    { id: 'geo-paris', lat: 48.8566, lng: 2.3522, city: 'Paris', city_zh: '巴黎', country: 'France', year_start: 1919, year_end: 1929, characters: ['larry','isabel','maugham','elliott'], significance: 'journey_origin', is_highlight: true,
       maugham: '我第一次见到拉里·达雷尔是在巴黎拉丁区的一条安静街道上，他坐在一家咖啡馆的露台上，手里拿着一本书，目光望向窗外。他刚满二十四岁，但眼神里有一种不属于年轻人的东西——仿佛他已经看过深渊。我当时正在为我的下一部小说寻找素材，而拉里·达雷尔的故事，就这样走进了我的视野。',
       maugham_zh: '我第一次见到拉里·达雷尔是在巴黎拉丁区的一条安静街道上，他坐在一家咖啡馆的露台上，手里拿着一本书，目光望向窗外。他刚满二十四岁，但眼神里有一种不属于年轻人的东西——仿佛他已经看过深渊。我当时正在为我的下一部小说寻找素材，而拉里·达雷尔的故事，就这样走进了我的视野。',
       events: ['larry-isabel-breakup','landor-poem'],
@@ -943,7 +1001,7 @@ var RazorMap = (function() {
       events: ['sophie-london-found','isabel-final-revelation','larry-return-finale'],
       joint_note: null
     },
-    { id: 'geo-gibraltar', lat: 36.1391, lng: -5.3536, city: 'Gibraltar', city_zh: '直布罗陀', country: 'UK', year_start: 1924, year_end: 1924, characters: ['larry','sophie'], significance: 'cruise_respite', is_highlight: false,
+    { id: 'geo-gibraltar', lat: 36.1391, lng: -5.3536, city: 'Gibraltar', city_zh: '直布罗陀', country: 'UK', year_start: 1924, year_end: 1924, characters: ['larry','sophie','elliott'], significance: 'cruise_respite', is_highlight: false,
       maugham: '我没有参加拉里和苏菲的地中海之行，但埃利奥特告诉我他在直布罗陀遇到他们。苏菲在甲板上看着夕阳缓缓落入大西洋，对埃利奥特说了一句话："太阳每天落下去，可我为什么看不到明天？"这句话让我久久不能忘记。',
       maugham_zh: '我没有参加拉里和苏菲的地中海之行，但埃利奥特告诉我他在直布罗陀遇到他们。苏菲在甲板上看着夕阳缓缓落入大西洋，说："太阳每天落下去，可我为什么看不到明天？"这句话让我久久不能忘记。',
       events: ['sophie-gibraltar-quote'],
@@ -955,7 +1013,7 @@ var RazorMap = (function() {
       events: [],
       joint_note: null
     },
-    { id: 'geo-malaga', lat: 36.7201, lng: -4.4203, city: 'Malaga', city_zh: '马拉加', country: 'Spain', year_start: 1924, year_end: 1924, characters: ['sophie'], significance: 'last_mass', is_highlight: false,
+    { id: 'geo-malaga', lat: 36.7201, lng: -4.4203, city: 'Malaga', city_zh: '马拉加', country: 'Spain', year_start: 1924, year_end: 1924, characters: ['sophie','elliott'], significance: 'last_mass', is_highlight: false,
       maugham: '埃利奥特告诉我，在马拉加，苏菲独自去了一座老教堂，在那里坐了整个下午，听管风琴演奏。她告诉拉里："我不信上帝，但那一刻我觉得，也许有什么东西在听。"这是我听到的关于苏菲的最后一件事——在苏伊士失踪之前。她始终在寻找某种东西，即使她已经不相信任何现成的答案。',
       maugham_zh: '埃利奥特告诉我，在马拉加，苏菲独自去了一座老教堂，在那里坐了整个下午，听管风琴演奏。她告诉拉里："我不信上帝，但那一刻我觉得，也许有什么东西在听。"这是我听到的关于苏菲的最后一件事——在苏伊士失踪之前。',
       events: ['sophie-malaga-church'],
@@ -965,6 +1023,18 @@ var RazorMap = (function() {
       maugham: '关于苏菲，我是从她在伊利诺伊州的老邻居那里听到的故事。在那场车祸之前，她是一个完全不同的女人——爱笑，爱读诗，和拉里是青梅竹马。那场车祸在一瞬间夺走了她的丈夫和儿子。我在芝加哥见到了她的婆婆布拉德肖夫人，那是一个被悲伤彻底击垮的老人。她告诉我："苏菲从来没有从那天走出来过。"',
       maugham_zh: '关于苏菲，我是从她在伊利诺伊州的老邻居那里听到的故事。在那场车祸之前，她是一个完全不同的女人——爱笑，爱读诗，和拉里是青梅竹马。那场车祸在一瞬间夺走了她的丈夫和儿子。"苏菲从来没有从那天走出来过。"',
       events: ['sophie-accident'],
+      joint_note: null
+    },
+    { id: 'geo-rome', lat: 41.9028, lng: 12.4964, city: 'Rome', city_zh: '罗马', country: 'Italy', year_start: 1920, year_end: 1925, characters: ['elliott'], significance: 'elliott_vatican', is_highlight: false,
+      maugham: '埃利奥特在罗马有一套完整的社交网络——从梵蒂冈的红衣主教到科尔索大街的贵族沙龙。他每年春天去罗马"朝圣"，不是为了信仰，而是为了在教廷的晚宴上被引见给某位枢机主教。他把这种社交活动称为"必要的投资"，尽管他本人可能并不清楚自己在投资什么。',
+      maugham_zh: '埃利奥特在罗马有一套完整的社交网络——从梵蒂冈的红衣主教到科尔索大街的贵族沙龙。他每年春天去罗马"朝圣"，不是为了信仰，而是为了在教廷的晚宴上被引见给某位枢机主教。他把这种社交活动称为"必要的投资"。',
+      events: ['elliott-rome-society'],
+      joint_note: null
+    },
+    { id: 'geo-antibes', lat: 43.5597, lng: 7.1083, city: "Cap d'Antibes", city_zh: '安提布角', country: 'France', year_start: 1921, year_end: 1927, characters: ['elliott'], significance: 'elliott_riviera', is_highlight: false,
+      maugham: '每年夏天，埃利奥特都会出现在安提布角的Hôtel du Cap，在那里租一套海景套房，参加整个社交季的活动。他告诉我，"在里维埃拉的夏天，整个欧洲的上流社会都会在这里聚集——你不需要去拜访他们，他们自己会来。"他把这看作是自己社交智慧的巅峰，尽管毛姆觉得这不过是一种更体面的无所事事。',
+      maugham_zh: '每年夏天，埃利奥特都会出现在安提布角的Hôtel du Cap，在那里租一套海景套房，参加整个社交季的活动。"在里维埃拉的夏天，整个欧洲的上流社会都会在这里聚集——你不需要去拜访他们，他们自己会来。"',
+      events: [],
       joint_note: null
     },
     { id: 'geo-nice', lat: 43.7102, lng: 7.2620, city: 'Nice', city_zh: '尼斯', country: 'France', year_start: 1929, year_end: 1929, characters: ['elliott','maugham'], significance: 'elliott_death', is_highlight: false,
@@ -1119,8 +1189,98 @@ var RazorMap = (function() {
       novel_scene_zh: '埃利奥特在巴黎的公寓里摆满了欧洲艺术品，但他真正的专长是中国瓷器——这是最高鉴赏力的标志。他鉴赏和采购明代瓷器的能力，是他职业身份的敲门砖。',
       story: "For Elliott, Chinese porcelain represented the apex of taste — something only the truly refined could appreciate. Owning it separated the nouveau riche (who bought obvious signs of wealth) from the truly cultured (who understood subtlety).",
       story_zh: '对埃利奥特来说，中国瓷器代表着品味的顶峰——只有真正有教养的人才能鉴赏。拥有它区分了那些暴发户（买明显财富标识的人）和真正有文化的人（懂得精微之处的人）。',
-      historical_context: "European obsession with Chinese porcelain reached its height in the 18th century with Meissen and later Sèvres imitations, but genuine Ming and Qing dynasty pieces remained highly prized among collectors into the 20th century. Elliott\'s expertise in this area would have been both financially valuable and socially prestigious.",
+      historical_context: "European obsession with Chinese porcelain reached its height in the 18th century with Meissen and later Sèvres imitations, but genuine Ming and Qing dynasty pieces remained highly prized among collectors into the 20th century. Elliott's expertise in this area would have been both financially valuable and socially prestigious.",
       image_query: 'Chinese Ming dynasty blue and white porcelain collection European aristocratic interior',
+      image_url: ''
+    },
+    {
+      id: 'elliott-paris-apartment',
+      name: "Elliott's Paris Apartment (Right Bank)",
+      name_zh: '埃利奥特的巴黎公寓（右岸）',
+      type: 'property',
+      owner: 'elliott',
+      represents: 'social_headquarters',
+      appears_in: 'Ch1-5',
+      appear_year: 1919,
+      waypoint_id: 'geo-paris',
+      novel_scene: "Elliott's apartment on the fashionable Right Bank of Paris was his social headquarters — a carefully curated stage where every painting, every piece of porcelain, every arrangement of flowers was designed to impress. He received guests there as if he were a minor prince holding court.",
+      novel_scene_zh: '埃利奥特在巴黎右岸时尚区的公寓是他的社交总部——一个精心布置的舞台，每一幅画、每一件瓷器、每一束花的摆放都是为了给人留下深刻印象。他在那里接待客人，仿佛自己是一位小王子在主持宫廷。',
+      story: "The apartment was Elliott's most important possession — not because of its monetary value, but because it was the physical manifestation of his social identity. Without it, he was just another American in Europe; with it, he was a host, a connector, a gatekeeper.",
+      story_zh: '这间公寓是埃利奥特最重要的财产——不是因为它的金钱价值，而是因为它是他社交身份的物理体现。没有它，他只是欧洲的又一个美国人；有了它，他是主人、是中间人、是守门人。',
+      historical_context: "The Right Bank of Paris — particularly the 8th and 16th arrondissements — was the epicenter of international high society in the 1920s. Having an apartment there was a statement of belonging to the world of old money and European sophistication.",
+      image_query: '1920s Paris Right Bank luxury apartment drawing room art collection elegant interior',
+      image_url: ''
+    },
+    {
+      id: 'elliott-address-book',
+      name: "Elliott's Social Address Book",
+      name_zh: '埃利奥特的社交通讯录',
+      type: 'social_network',
+      owner: 'elliott',
+      represents: 'social_capital_incarnate',
+      appears_in: 'Ch1-26',
+      appear_year: 1919,
+      waypoint_id: 'geo-paris',
+      novel_scene: "Elliott's address book — a leather-bound volume containing the names, addresses, and private telephone numbers of everyone who mattered in European society — was his most closely guarded possession. He consulted it daily, updating it with the precision of a banker managing accounts.",
+      novel_scene_zh: '埃利奥特的通讯录——一本皮面装帧的册子，里面记录着欧洲社会所有重要人物的姓名、地址和私人电话号码——是他最严密看管的财产。他每天查阅，以银行家管理账目的精确度来更新它。',
+      story: "For Elliott, this book was power made tangible. It represented decades of careful cultivation — every dinner attended, every introduction made, every favor traded. When he died, the book was worthless; the people in it had moved on.",
+      story_zh: '对埃利奥特来说，这本书是权力的具象化。它代表着数十年的精心经营——每一次出席晚宴、每一次引荐、每一次人情交易。当他去世时，这本书变得一文不值；里面的人早已各奔东西。',
+      historical_context: "Before digital contacts, a personal address book was a socialite's most valuable weapon. The ability to 'get someone on the phone' — a duke, a cardinal, a minister — was the ultimate proof of social power. Elliott's book was his life's work.",
+      image_query: 'leather bound address book 1920s socialite European aristocracy contacts',
+      image_url: ''
+    },
+    {
+      id: 'elliott-wardrobe',
+      name: "Elliott's Formal Wardrobe",
+      name_zh: '埃利奥特的礼服衣橱',
+      type: 'clothing',
+      owner: 'elliott',
+      represents: 'sartorial_social_armor',
+      appears_in: 'Ch1-26',
+      appear_year: 1919,
+      waypoint_id: 'geo-paris',
+      novel_scene: "Elliott possessed a wardrobe of extraordinary range — white tie and tails for the most formal occasions, dinner jackets for less grand events, country clothes for weekends at estates, and an array of morning coats for weddings and funerals. Each outfit was Savile Row perfection.",
+      novel_scene_zh: '埃利奥特拥有一个范围惊人的衣橱——最正式场合的白领结燕尾服、不那么隆重的晚宴夹克、庄园周末的乡间服装、以及婚礼和葬礼用的各式晨礼服。每一套都是萨维尔街的完美之作。',
+      story: "Elliott's clothes were his armor. In a world where being improperly dressed could mean social death, his impeccable wardrobe ensured he was always prepared. His greatest fear was being invited somewhere and not having the right outfit.",
+      story_zh: '埃利奥特的衣服是他的盔甲。在一个穿着不当可能意味着社交死亡的世界里，他无可挑剔的衣橱确保他永远准备就绪。他最大的恐惧是被邀请去某个场合却没有合适的衣服。',
+      historical_context: "The dress codes of 1920s European high society were rigid and complex — white tie, black tie, morning dress, lounge suit, country attire — each with strict rules. A man's wardrobe was a direct reflection of his social competence. Savile Row tailors like Henry Poole & Co dressed the European elite.",
+      image_query: '1920s Savile Row formal wardrobe white tie tails dinner jacket gentleman dressing room',
+      image_url: ''
+    },
+    {
+      id: 'elliott-vatican-connection',
+      name: "Elliott's Vatican Connections",
+      name_zh: '埃利奥特的梵蒂冈人脉',
+      type: 'social_network',
+      owner: 'elliott',
+      represents: 'religion_as_social_currency',
+      appears_in: 'Ch10, Ch26',
+      appear_year: 1922,
+      waypoint_id: 'geo-rome',
+      novel_scene: "Elliott cultivated relationships with Vatican officials — not out of faith, but because access to the Catholic hierarchy opened doors that mere wealth could not. His ability to arrange an audience with a cardinal was his most exotic social asset.",
+      novel_scene_zh: '埃利奥特与梵蒂冈官员培养关系——不是出于信仰，而是因为接近天主教高层能打开单纯的财富无法打开的大门。他能安排一次与枢机主教的会面，这是他最异国情调的社交资产。',
+      story: "Elliott's Vatican connections represented the ultimate fusion of his two obsessions: religion and social climbing. He treated the Catholic Church as he treated any other social institution — a place to make connections and gain prestige. The irony, of course, was that on his deathbed he finally found genuine faith.",
+      story_zh: '埃利奥特的梵蒂冈人脉代表着他两大痴迷的终极融合：宗教和社交攀升。他对待天主教会就像对待任何其他社交机构一样——一个建立关系和获得声望的地方。讽刺的是，他在临终时终于找到了真正的信仰。',
+      historical_context: "The Vatican was a major social power in 1920s Europe — papal audiences were coveted social events, and Catholic aristocracy formed a parallel power structure to secular nobility. For an American art dealer, Vatican connections were the ultimate proof of European acceptance.",
+      image_query: 'Vatican papal audience 1920s Catholic hierarchy cardinal European aristocracy',
+      image_url: ''
+    },
+    {
+      id: 'elliott-mediterranean-cruise',
+      name: "Elliott's Mediterranean Cruise (1924)",
+      name_zh: '埃利奥特的地中海巡航（1924）',
+      type: 'experience',
+      owner: 'elliott',
+      represents: 'social_display_as_life_art',
+      appears_in: 'Ch22-24',
+      appear_year: 1924,
+      waypoint_id: 'geo-gibraltar',
+      novel_scene: "The 1924 Mediterranean cruise was Elliott's masterpiece of social orchestration — he arranged for the right people to be on the right ship at the right time. He treated the cruise as a floating salon, hosting dinners and introductions that would have impressed a diplomatic protocol officer.",
+      novel_scene_zh: '1924年的地中海巡航是埃利奥特社交编排的杰作——他安排了正确的人在正确的时间上了正确的船。他把这次航行当作一个流动沙龙，主持的晚宴和引荐足以让外交礼宾官感到钦佩。',
+      story: "For Elliott, the cruise was not a holiday but a performance. Every dinner seating, every shore excursion, every introduction was calculated. He was simultaneously the host, the impresario, and the star of his own social theater.",
+      story_zh: '对埃利奥特来说，这次巡航不是度假而是一场演出。每一次晚宴座位安排、每一次上岸游览、每一次引荐都是精心策划的。他同时是主持人、制作人、以及自己社交剧场的明星。',
+      historical_context: "Mediterranean cruises in the 1920s were the pinnacle of elite travel — ships like the SS Île de France offered floating versions of grand hotel life. Social hierarchies were maintained even at sea, with dinner seating determined by status. For socialites like Elliott, the cruise was a mobile stage.",
+      image_query: '1920s Mediterranean cruise ship first class dining socialite elegant passengers',
       image_url: ''
     },
     {
@@ -1143,16 +1303,6 @@ var RazorMap = (function() {
     }
   ];
   var EVENTS = {
-    'landor-poem': {
-      id: 'landor-poem', type: 'epigraph', significance: 'medium',
-      title: '兰德尔的诗 · Landor\'s Epigraph', title_zh: '兰德尔的诗 · Landor\'s Epigraph',
-      summary: '毛姆将英国诗人沃尔特·萨维奇·兰德（Walter Savage Landor, 1775–1874）的《老哲学家遗言》置于全书卷首，作为理解拉里精神旅程的钥匙。',
-      summary_zh: '毛姆将英国诗人沃尔特·萨维奇·兰德（Walter Savage Landor, 1775–1874）的《老哲学家遗言》置于全书卷首，作为理解拉里精神旅程的钥匙。这首诗是对存在主义精神追求的古典表达：诗人不与人争，不依附于自然或艺术之外的一切，最终在生命之火熄灭时安然离场。',
-      waypoint_id: 'geo-paris', characters: ['larry'], year: 1919, chapter: 'Ch5', pages: '卷首',
-      excerpt: 'I strove with none, for none was worth my strife;\nNature I loved, and next to Nature, Art;\nI warmed both hands before the fire of Life;\nIt sinks, and I am ready to depart.',
-      excerpt_context: 'Landor wrote this at age 72. It became the spiritual epigraph for Maugham\'s novel about Larry\'s search for meaning.',
-      analysis: '拉里正是兰德诗中"晃膀子"的实践者——他拒绝世俗成功（财富、婚姻、社会地位），在自然和艺术中寻找生命的意义，最终在精神层面完成了与"生命之火"的和解。毛姆用这首诗为整部小说设定了调性：这不是一个关于成功或失败的故事，而是一个关于如何安然离场的问题。'
-    },
     'larry-isabel-breakup': {
       id: 'larry-isabel-breakup', type: 'pivotal_conversation', significance: 'high_energy',
       title: '"晃膀子" · 伊莎贝尔与拉里的决裂', title_zh: '"晃膀子" · 伊莎贝尔与拉里的决裂',
@@ -1231,7 +1381,7 @@ var RazorMap = (function() {
       analysis: '苏伊士是小说真正的结局所在。Larry在这里完成了他精神旅程的最终整合：他理解了自由的真正含义——不是拥有拯救他人的力量，而是尊重每个人走向觉醒（或不走向觉醒）的自由。'
     },
     'landor-poem': {
-      id: 'landor-poem', type: 'famous_quote', significance: 'high_energy',
+      id: 'landor-poem', type: 'epigraph', significance: 'high_energy',
       title: '兰德尔的诗', title_zh: '卷首语：兰德尔的诗',
       summary: '沃尔特·兰德尔在巴黎的公寓里对拉里朗诵了自己的诗《老哲学家的临终遗言》。这首诗成为拉里精神旅程的指针，也是整部小说的卷首语。',
       summary_zh: '沃尔特·兰德尔在巴黎的公寓里对拉里朗诵了自己的诗《老哲学家的临终遗言》。这首诗成为整部小说的卷首语。',
@@ -1307,6 +1457,17 @@ var RazorMap = (function() {
       excerpt_zh: '他让我给他弄一张公爵夫人的舞会请柬。即使在临终的病床上，他仍然是那个埃利奥特。',
       analysis: '埃利奥特的死是小说最深刻的讽刺之一：他一辈子追求的东西（贵族认可、社会地位）在临终时完全缺席；但正是这种彻底的失败，让他第一次接触到了真正的信仰。毛姆借此展示，虚假的价值有时候要等到彻底破产之后，才能让人看见真实。'
     },
+    'elliott-rome-society': {
+      id: 'elliott-rome-society', type: 'social_scene', significance: 'low',
+      title: "Elliott's Roman Society · 埃利奥特的罗马社交圈", title_zh: '埃利奥特的罗马社交圈',
+      summary: "Elliott maintains an extensive network in Rome — from Vatican cardinals to aristocratic salons on the Corso. He visits annually for the 'season', cultivating connections that he considers essential to his social standing. His Catholicism is more social than spiritual, but it serves him well in Roman high society.",
+      summary_zh: '埃利奥特在罗马维持着庞大的社交网络——从梵蒂冈的红衣主教到科尔索大街的贵族沙龙。他每年春天前往罗马参加"社交季"，培养他认为对社会地位至关重要的人脉。他的天主教信仰更多是社交性质而非灵性追求，但在罗马上流社会中极为有效。',
+      waypoint_id: 'geo-rome', characters: ['elliott'], year: 1922, chapter: 'Ch10', pages: '150-160',
+      excerpt: "Elliott's Catholicism was, like everything else about him, a social asset. He didn't believe in God, but he believed in the Vatican.",
+      excerpt_context: '毛姆对埃利奥特信仰的讽刺：他的天主教和他的一切一样，都是社交工具。他不信上帝，但他信梵蒂冈。',
+      excerpt_zh: '埃利奥特的天主教信仰，和他的一切一样，是一种社交资产。他不信上帝，但他信梵蒂冈。',
+      analysis: '罗马是埃利奥特社交帝国的重要一环。他通过宗教关系进入了意大利贵族的核心圈子，这种"信仰投资"反映了他对社会地位的执着追求。'
+    },
     'larry-cairo-dialogue': {
       id: 'larry-cairo-dialogue', type: 'conversation', significance: 'medium',
       title: '开罗：尼罗河畔的对话', title_zh: '开罗：尼罗河畔的对话',
@@ -1347,14 +1508,14 @@ var RazorMap = (function() {
       ]
     },
     isabel: {
-      color: '#f0a0c0', weight: 3, opacity: 0.75, dashArray: '10,6',
+      color: '#e89ac7', weight: 3, opacity: 0.75, dashArray: '10,6',
       coords: [
         [41.8781,-87.6298], [41.8781,-87.6298], [41.8781,-87.6298],
         [51.5074,-0.1278]
       ]
     },
     sophie: {
-      color: '#d06060', weight: 5, opacity: 0.8, dashArray: '3,5',
+      color: '#e88080', weight: 5, opacity: 0.8, dashArray: '3,5',
       coords: [
         [40.0000,-89.0000], [40.0000,-89.0000],
         [51.5074,-0.1278], [51.5074,-0.1278],
@@ -1363,7 +1524,7 @@ var RazorMap = (function() {
       ]
     },
     gray: {
-      color: '#5a9fd4', weight: 3, opacity: 0.7, dashArray: '8,6',
+      color: '#6a9fd8', weight: 3, opacity: 0.7, dashArray: '8,6',
       coords: [
         [41.8781,-87.6298], [41.8781,-87.6298], [41.8781,-87.6298],
         [51.5074,-0.1278]
@@ -1372,12 +1533,13 @@ var RazorMap = (function() {
     elliott: {
       color: '#6ab87a', weight: 3, opacity: 0.8, dashArray: '12,5',
       coords: [
-        [48.8566,2.3522],   // Paris 1919
-        [48.8566,2.3522],   // Paris (multiple stays)
-        [51.5074,-0.1278],  // London 1923-24
-        [36.1391,-5.3536],  // Gibraltar (cruise 1924)
-        [36.7201,-4.4203],  // Malaga (cruise 2024)
-        [43.7102,7.2620]    // Nice 1929
+        [48.8566,2.3522],   // Paris — 常驻基地 (1919-1929)
+        [41.9028,12.4964],  // Rome — 意大利社交圈 (1920-1925)
+        [43.5597,7.1083],   // Cap d'Antibes — 里维埃拉夏季社交 (1921-1927)
+        [51.5074,-0.1278],  // London — 英国上流社交 (1923-24)
+        [36.1391,-5.3536],  // Gibraltar — 地中海巡航 (1924)
+        [36.7201,-4.4203],  // Malaga — 巡航 (1924)
+        [43.7102,7.2620]    // Nice — 临终 (1929)
       ]
     },
     suzanne: {
@@ -1420,11 +1582,12 @@ var RazorMap = (function() {
   var activeQuoteIdx = -1;
   var expandedEvents = {};
   var routeLayers = {};
+  var waypointMarkers = {}; // store marker references by waypoint ID
   var sophieVoyageLayer = null;
   var sophieVoyageShipMarkers = {};
   var sophieVoyageActive = false;
   var highEnergyGroup = null; // L.LayerGroup for high-energy star markers
-  var visibleCharacters = { larry: true, isabel: true, sophie: true, gray: true, elliott: true, suzanne: true };
+  var visibleCharacters = { larry: true, isabel: false, sophie: false, gray: false, elliott: false, suzanne: false };
   var activeWpId = null;   // currently open waypoint
   var activeCharId = null;  // last clicked character route
   var activeCharFilter = null; // character filter for status/quote panels
@@ -1447,16 +1610,6 @@ var RazorMap = (function() {
       attribution: 'National Geographic, Esri, GEBCO, NOAA',
       maxZoom: 10
     }).addTo(map);
-
-    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}', {
-      attribution: 'Esri, GEBCO, NOAA',
-      maxZoom: 10
-    });
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors',
-      maxZoom: 10
-    });
 
     // Build routes
     Object.keys(ROUTES).forEach(function(charId) {
@@ -1506,12 +1659,7 @@ var RazorMap = (function() {
     bindSlider();
     buildCharPanel();
     buildStatusPanel();
-    buildLegend();
     syncLegendState();
-    // Draw all visible character routes on load
-    Object.keys(visibleCharacters).forEach(function(charId) {
-      if (visibleCharacters[charId]) addRoute(charId);
-    });
     // Quote panel starts hidden; press Q or click a waypoint to show it
   }
 
@@ -1519,6 +1667,8 @@ var RazorMap = (function() {
   function addRoute(charId) {
     var r = ROUTES[charId];
     if (!r) return;
+    // Prevent orphaned layers: remove existing before creating new
+    if (routeLayers[charId]) { map.removeLayer(routeLayers[charId]); }
     var polyline = L.polyline(r.coords, {
       color: r.color,
       weight: r.weight,
@@ -1531,17 +1681,13 @@ var RazorMap = (function() {
   }
 
   function toggleRoute(charId) {
-    alert('toggleRoute(' + charId + ') called! visible now=' + visibleCharacters[charId]);
     visibleCharacters[charId] = !visibleCharacters[charId];
     if (visibleCharacters[charId]) {
       addRoute(charId);
-      alert('addRoute done. routeLayers['' + charId + '']=' + !!routeLayers[charId]);
     } else {
-      alert('will remove. routeLayers['' + charId + '']=' + !!routeLayers[charId] + ' type=' + typeof routeLayers[charId]);
       if (routeLayers[charId]) {
         map.removeLayer(routeLayers[charId]);
         delete routeLayers[charId];
-        alert('removed. now routeLayers['' + charId + '']=' + !!routeLayers[charId]);
       }
     }
     buildCharPanel();
@@ -1695,6 +1841,7 @@ var RazorMap = (function() {
       className: 'razor-popup'
     });
     marker.addTo(map);
+    waypointMarkers[wp.id] = marker; // store reference for later access
     // Track active waypoint for context-aware status + quote panels
     marker.on('click', function() {
       activeWpId = wp.id;
@@ -1785,7 +1932,7 @@ var RazorMap = (function() {
     html += '<div class="popup-maugham-label">&#9670; Maugham 叙述者视角</div>';
     html += '<div class="popup-maugham-text">' + (wp.maugham_zh || wp.maugham || '暂无毛姆叙述者视角记录').replace(/\n/g, '<br>') + '</div>';
     html += '</div>';
-    html += '<div style="font-size:9.5px;color:#6a7a8a;margin-top:8px;line-height:1.5;">毛姆在小说中以第三人称全知视角叙述，同时他本人也是书中的角色——一位作家，通过社交圈收集各人物的故事素材。</div>';
+    html += '<div style="font-size:9.5px;color:#8a9aaa;margin-top:8px;line-height:1.5;">毛姆在小说中以第三人称全知视角叙述，同时他本人也是书中的角色——一位作家，通过社交圈收集各人物的故事素材。</div>';
     html += '</div>';
 
     // Tab: Status Objects (面子之物)
@@ -1809,7 +1956,7 @@ var RazorMap = (function() {
         html += '<span style="font-size:7.5px;padding:1px 4px;background:#2a1e2e;color:' + owner.color + ';border-radius:2px;">' + owner.name_zh + '</span>';
         html += '</div></div></div>';
         html += '<div style="font-size:9px;color:#7a8aaa;line-height:1.5;">' + obj.novel_scene_zh + '</div>';
-        html += '<div style="font-size:8.5px;color:#5a6a7a;line-height:1.5;margin-top:5px;border-top:1px dashed #1e2e48;padding-top:5px;"><strong style="color:#8ab0c8;">故事：</strong>' + obj.story_zh + '</div>';
+        html += '<div style="font-size:8.5px;color:#7a8a9a;line-height:1.5;margin-top:5px;border-top:1px dashed #1e2e48;padding-top:5px;"><strong style="color:#8ab0c8;">故事：</strong>' + obj.story_zh + '</div>';
         if (obj.historical_context) {
           html += '<div style="font-size:8px;color:#5a6a5a;line-height:1.5;margin-top:4px;"><strong style="color:#8ab0c8;">考据：</strong>' + obj.historical_context + '</div>';
         }
@@ -1823,7 +1970,7 @@ var RazorMap = (function() {
   }
 
   function buildSophiePopup() {
-    return '<div class="popup-title" style="color:#c46a6a;">Sophie Missing &middot; 索菲失踪</div>' +
+    return '<div class="popup-title" style="color:#e88080;">Sophie Missing &middot; 索菲失踪</div>' +
            '<div class="popup-meta">~ 1924 &middot; 地中海航海途中</div>' +
            '<div style="margin-top:10px;font-size:12px;color:#c8b898;line-height:1.7;">' +
            '拉里找到已沉沦酒精的索菲，带她登上邮轮试图拯救。<br>' +
@@ -1877,19 +2024,27 @@ var RazorMap = (function() {
       var c = CHARACTERS[id];
       if (id === 'maugham') return; // maugham not in panel
       var isVisible = visibleCharacters[id];
-      var initials = c.name_zh.replace(/[^\\u4e00-\\u9fa5]/g, '').slice(0, 1) || c.name.split(' ').map(function(w){return w[0];}).join('');
-      html += '<div class="char-toggle-row' + (isVisible ? '' : ' inactive') + '" onclick="RazorMap.toggleRoute(\'' + id + '\')">';
+      var initials = c.name_zh.replace(/[^\u4e00-\u9fa5]/g, '').slice(0, 1) || c.name.split(' ').map(function(w){return w[0];}).join('');
+      html += '<div class="char-card">';
+      html += '<div class="char-toggle-row' + (isVisible ? '' : ' inactive') + '">';
       html += '<div class="char-avatar" style="background:' + c.color + ';">' + initials + '</div>';
-      html += '<div class="char-toggle-dot" style="background:' + c.color + ';"></div>';
-      html += '<div class="char-toggle-name">' + c.name_zh + '</div>';
-      html += '<div class="char-toggle-check">' + (isVisible ? '&#9633;' : '&#9634;') + '</div>';
+      html += '<div class="char-toggle-dot" style="background:' + c.color + ';" onclick="RazorMap.toggleRoute(\'' + id + '\')"></div>';
+      html += '<div class="char-toggle-name" onclick="RazorMap.toggleCharDetail(\'' + id + '\')">' + c.name_zh + ' <span class="char-expand-btn" id="expand-' + id + '">&#9654;</span></div>';
+      html += '<div class="char-toggle-check" onclick="RazorMap.toggleRoute(\'' + id + '\')">' + (isVisible ? '&#9633;' : '&#9634;') + '</div>';
+      html += '</div>';
+      // Detail section (collapsed by default)
+      html += '<div class="char-detail" id="detail-' + id + '">';
+      html += '<div class="char-detail-role">' + (c.role || '').replace(/_/g, ' ') + '</div>';
+      if (c.bio_zh) html += '<div class="char-detail-bio">' + c.bio_zh.substring(0, 120) + (c.bio_zh.length > 120 ? '...' : '') + '</div>';
+      if (c.arc_zh) html += '<div class="char-detail-arc">' + c.arc_zh.substring(0, 100) + (c.arc_zh.length > 100 ? '...' : '') + '</div>';
+      html += '</div>';
       html += '</div>';
     });
 
     // Route lines legend
     html += '<div style="margin-top:12px;padding-top:8px;border-top:1px solid #2a3a5a;">';
-    html += '<div style="font-size:9px;color:#5a6a7a;margin-bottom:6px;letter-spacing:1px;">CLICK TO TOGGLE ROUTE</div>';
-    html += '<div style="font-size:9px;color:#4a5a6a;line-height:1.7;">';
+    html += '<div style="font-size:9px;color:#7a8a9a;margin-bottom:6px;letter-spacing:1px;">CLICK TO TOGGLE ROUTE</div>';
+    html += '<div style="font-size:9px;color:#6a7a8a;line-height:1.7;">';
     html += '实线 = 当前显示<br>方块 = 已隐藏';
     html += '</div></div>';
 
@@ -1939,7 +2094,7 @@ var RazorMap = (function() {
     if (!container) return;
     var objects = getFilteredStatusObjects();
     if (objects.length === 0) {
-      container.innerHTML = '<div style="font-size:9px;color:#5a6a7a;text-align:center;padding:20px 0;">点击地点或角色查看相关面子之物</div>';
+      container.innerHTML = '<div style="font-size:9px;color:#7a8a9a;text-align:center;padding:20px 0;">点击地点或角色查看相关面子之物</div>';
       return;
     }
     container.innerHTML = objects.map(buildStatusCard).join('');
@@ -1966,20 +2121,58 @@ var RazorMap = (function() {
     showContextQuote();
   }
 
-  function closeCharPanel() {
-    var panel = document.getElementById('char-panel');
-    panel.style.display = 'none';
+  function closeSidebar() {
+    var sidebar = document.getElementById('sidebar');
+    sidebar.classList.add('panel-hidden');
   }
 
-  function openCharPanel() {
-    var panel = document.getElementById('char-panel');
-    panel.style.display = 'block';
+  function openSidebar() {
+    var sidebar = document.getElementById('sidebar');
+    sidebar.classList.remove('panel-hidden');
   }
 
-  function toggleStatusPanel() {
-    var panel = document.getElementById('status-panel');
-    panel.classList.toggle('open');
+  function switchSidebarTab(tabName) {
+    var routesTab = document.getElementById('tab-routes');
+    var charsTab = document.getElementById('tab-characters');
+    var routesContent = document.getElementById('tab-content-routes');
+    var charsContent = document.getElementById('tab-content-characters');
+    if (tabName === 'routes') {
+      routesTab.classList.add('active');
+      charsTab.classList.remove('active');
+      routesContent.style.display = 'block';
+      charsContent.style.display = 'none';
+    } else {
+      routesTab.classList.remove('active');
+      charsTab.classList.add('active');
+      routesContent.style.display = 'none';
+      charsContent.style.display = 'block';
+    }
   }
+
+  function toggleLegend() {
+    var sidebar = document.getElementById('sidebar');
+    sidebar.classList.toggle('panel-hidden');
+    if (!sidebar.classList.contains('panel-hidden')) {
+      switchSidebarTab('routes');
+    }
+  }
+
+  function toggleCharPanel() {
+    var sidebar = document.getElementById('sidebar');
+    sidebar.classList.toggle('panel-hidden');
+    if (!sidebar.classList.contains('panel-hidden')) {
+      switchSidebarTab('characters');
+    }
+  }
+
+  function toggleCharDetail(charId) {
+    var detail = document.getElementById('detail-' + charId);
+    var btn = document.getElementById('expand-' + charId);
+    if (!detail) return;
+    detail.classList.toggle('expanded');
+    if (btn) btn.classList.toggle('expanded');
+  }
+
 
   function openStatusModal() {
     var overlay = document.getElementById('status-modal-overlay');
@@ -1995,7 +2188,7 @@ var RazorMap = (function() {
       html += '<div class="modal-card-meta">';
       html += '<span class="badge badge-type">' + obj.type + '</span>';
       html += '<span class="badge badge-owner">' + obj.owner + '</span>';
-      html += '<span style="font-size:9px;color:#6a8aaa;">' + loc + ' (' + obj.appear_year + ')</span>';
+      html += '<span style="font-size:9px;color:#9ac0e0;">' + loc + ' (' + obj.appear_year + ')</span>';
       html += '</div>';
       html += '<div class="modal-card-desc">' + desc + '</div>';
       html += '</div>';
@@ -2016,7 +2209,7 @@ var RazorMap = (function() {
     closeStatusModal();
     map.flyTo([wp.lat, wp.lng], 7, { duration: 1.5 });
     setTimeout(function() {
-      var marker = markers[wp.id];
+      var marker = waypointMarkers[wp.id];
       if (marker) marker.openPopup();
     }, 800);
   }
@@ -2098,9 +2291,6 @@ var RazorMap = (function() {
     }
   }
 
-  function buildLegend() {
-    // legend is pure HTML/CSS, no JS needed
-  }
 
   // ─── TIME RULER ─────────────────────────────────────────────
   function buildTimeRuler() {
@@ -2214,7 +2404,7 @@ var RazorMap = (function() {
       '<div style="font-size:9.5px;color:#9a8a78;line-height:1.6;margin-bottom:5px;">' +
       '我不与人争，因无人值得我争斗<br>我爱自然，其次爱与自然相近的艺术<br>' +
       '我把双手伸向生命之火取暖。火萎了，我已准备好离开。</div>' +
-      '<div style="font-size:8px;color:#5a6a7a;">Landor · 《老哲学家遗言》&nbsp; 《刀锋》第5章</div>' +
+      '<div style="font-size:8px;color:#7a8a9a;">Landor · 《老哲学家遗言》&nbsp; 《刀锋》第5章</div>' +
       '</div>';
 
     // Build context-aware quote section
@@ -2294,6 +2484,7 @@ var RazorMap = (function() {
   return {
     init: init,
     switchTab: switchTab,
+    switchSidebarTab: switchSidebarTab,
     toggleEvent: toggleEvent,
     toggleRoute: toggleRoute,
     flyToYear: flyToYear,
@@ -2301,13 +2492,15 @@ var RazorMap = (function() {
     buildTimelineBrief: buildTimelineBrief,
     showContextQuote: showContextQuote,
     closeQuote: closeQuote,
-    closeCharPanel: closeCharPanel,
-    openCharPanel: openCharPanel,
+    closeSidebar: closeSidebar,
+    openSidebar: openSidebar,
+    toggleCharDetail: toggleCharDetail,
+    toggleCharPanel: toggleCharPanel,
+    toggleLegend: toggleLegend,
     toggleAllRoutes: toggleAllRoutes,
     toggleSophieVoyage: toggleSophieVoyage,
     toggleMaugham: toggleMaugham,
     toggleHighEnergy: toggleHighEnergy,
-    toggleStatusPanel: toggleStatusPanel,
     toggleStatusCard: toggleStatusCard,
     updateContextPanels: updateContextPanels,
     showEventCluster: showEventCluster,
@@ -2320,15 +2513,39 @@ var RazorMap = (function() {
 // Start
 window.addEventListener('DOMContentLoaded', function() {
   RazorMap.init();
-  // Press Q to toggle the quote panel
+  // Keyboard shortcuts
   document.addEventListener('keydown', function(e) {
-    if (e.key === 'q' || e.key === 'Q') {
+    // Don't trigger shortcuts when typing in input fields
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+    if (e.key === 'Escape') {
+      // Close any open panel/modal/popup
+      var statusModal = document.getElementById('status-modal-overlay');
+      if (statusModal.classList.contains('open')) {
+        RazorMap.closeStatusModal();
+        return;
+      }
+      var quotePanel = document.getElementById('quote-panel');
+      if (quotePanel.classList.contains('visible')) {
+        RazorMap.closeQuote();
+        return;
+      }
+      var sidebar = document.getElementById('sidebar');
+      if (!sidebar.classList.contains('panel-hidden')) {
+        RazorMap.closeSidebar();
+        return;
+      }
+    } else if (e.key === 'q' || e.key === 'Q') {
       var panel = document.getElementById('quote-panel');
       if (panel.classList.contains('visible')) {
         RazorMap.closeQuote();
       } else {
         RazorMap.showContextQuote();
       }
+    } else if (e.key === 'l' || e.key === 'L') {
+      RazorMap.toggleLegend();
+    } else if (e.key === 'c' || e.key === 'C') {
+      RazorMap.toggleCharPanel();
     }
   });
 });
