@@ -138,3 +138,47 @@ literary-maps/
 
 ### GitHub
 - https://github.com/mariusiaowego-commits/literary-maps
+
+---
+
+# 2026-05-06 收尾
+
+[2026-05-06 14:00]
+
+## 📚 literary-maps 项目重命名收尾 + 卡拉马佐夫骨架
+
+### 完成内容
+
+1. **修复快捷键崩溃 bug** — P2-13 删了 buildLegend() 空函数但漏删 init() 调用，导致 ReferenceError 炸掉整个 init()，键盘事件注册未执行。删除 buildLegend() 调用后修复。
+2. **补完剩余 UI/UX 审计项** — P2-11 到 P2-15 共 5 项：
+   - Isabel/Gray ROUTES 颜色与 CHARACTERS 统一
+   - 删除未使用的 Ocean/OSM tile layer
+   - kbd 边框色 #3a5a3a → #3a5a8a
+   - html lang 改为 mul（多语言）
+3. **提交 PR #1 并合并** — feat(uiux): v2.1
+4. **项目重命名全流程**:
+   - 本地目录 razors-edge-map → literary-maps
+   - GitHub 仓库重命名 (gh repo rename)
+   - remote URL 更新为 SSH
+   - 目录重构：razors-edge/ + karamazov/ + 入口 index.html
+5. **卡拉马佐夫兄弟骨架页面** — 6 角色 / 8 航点 / 3 路线示例，暗色东正教主题
+6. **全量文档同步**:
+   - STATUS.md / README.md / DEVELOPMENT_PLAN.md 重写
+   - vibe coding log 追加
+   - LLM Wiki: project-literary-maps.md 新建，旧文件删除，index.md 更新
+   - tqob/05 Coding/project-literary-maps/ 文件夹重命名 + 内容同步
+   - coder MEMORY.md + USER.md 更新
+
+### 踩坑记录
+
+- **P2-13 连锁崩溃**: 删空函数时只看了函数定义，没 grep 调用方。教训：删任何函数前先搜 `function xxx` 和 `xxx(` 两处。
+- **GitHub SSH 偶发超时**: `Connection closed by UNKNOWN port 65535`，重试一次即成功。
+
+### 当前状态
+
+- main 和 origin/main 同步 (0997ca3)
+- 入口选择页可打开，刀锋地图完整可用
+- 卡拉马佐夫骨架就绪，待填充内容
+
+### GitHub
+- https://github.com/mariusiaowego-commits/literary-maps
