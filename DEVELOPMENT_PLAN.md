@@ -1,15 +1,20 @@
-# 🗺️ razors-edge-map 刀锋地图 - 开发计划
+# 📚 Literary Maps · 文学地图集 - 开发计划
 
-**最后更新**: 2026-05-04
+**最后更新**: 2026-05-06
 
 ---
 
 ## 📋 项目概述
 
-基于 W. Somerset Maugham 小说《刀锋》(1944) 的 Larry Darrell 精神朝圣之旅交互地图。追踪 Larry、Isabel、Sophie、Gray、Elliott 五个角色从战后巴黎出发，穿越地中海、南亚，最终在苏伊士完成精神觉醒的历程。
+交互式文学地图集，追踪伟大小说中角色的旅程、思想与命运。每部小说一个独立地图，共享统一的 UI 框架和设计语言。
+
+**当前包含地图**:
+- **刀锋 (The Razor's Edge)** — W. Somerset Maugham, 1944 ✅
+- **卡拉马佐夫兄弟 (The Brothers Karamazov)** — Fyodor Dostoevsky, 1880 🚧
 
 **作者**: mtt
 **创建时间**: 2026-05-03
+**扩展时间**: 2026-05-06
 
 ---
 

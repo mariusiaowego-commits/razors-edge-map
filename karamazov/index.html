@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="mul">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Карамазовы · 卡拉马佐夫兄弟 · Literary Maps</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Source+Sans+3:wght@400;600&display=swap">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --font-serif: 'EB Garamond', 'Songti SC', 'Noto Serif CJK SC', Georgia, serif;
+    --font-sans: 'Source Sans 3', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --type-sm: 11px;
+    --bg-deep: #0a1428;
+    --bg-panel: rgba(12, 20, 40, 0.92);
+    --border: #1e2e4a;
+    --gold: #c9a84c;
+    --text-main: #c8b898;
+    --text-dim: #7a8a9a;
+  }
+  html, body { height: 100%; font-family: var(--font-sans); background: var(--bg-deep); color: var(--text-main); }
+  #map { width: 100%; height: 100vh; }
+
+  /* ── Title ── */
+  .title-banner {
+    position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+    z-index: 900; text-align: center; pointer-events: none;
+  }
+  .title-banner h1 {
+    font-family: var(--font-serif); font-size: 22px; font-weight: 400;
+    color: var(--gold); letter-spacing: 2px; margin: 0;
+  }
+  .title-banner .subtitle { font-size: 11px; color: var(--text-dim); letter-spacing: 1px; }
+  .title-banner .back-link {
+    font-size: 10px; color: #4a6fa5; text-decoration: none; pointer-events: auto;
+  }
+  .title-banner .back-link:hover { color: var(--gold); }
+
+  /* ── Placeholder ── */
+  .placeholder {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    z-index: 800; text-align: center; pointer-events: none;
+    max-width: 500px; padding: 40px;
+  }
+  .placeholder h2 {
+    font-family: var(--font-serif); font-size: 28px; font-weight: 400;
+    color: var(--gold); margin-bottom: 12px;
+  }
+  .placeholder p { font-size: 14px; color: var(--text-dim); line-height: 1.8; }
+</style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<div class="title-banner">
+  <a class="back-link" href="../index.html">← Back to Literary Maps</a>
+  <h1>The Brothers Karamazov</h1>
+  <div class="subtitle">卡拉马佐夫兄弟 · Достоевский · 1880</div>
+</div>
+
+<div class="placeholder">
+  <h2>🚧 Coming Soon</h2>
+  <p>
+    Dostoevsky's final masterpiece — a philosophical novel about faith, doubt, and the Karamazov family
+    torn between spiritual longing and earthly desire.<br><br>
+    This map will trace the journeys of Dmitry, Ivan, Alyosha, and their father Fyodor
+    through the Russian provinces, Moscow, and the monastery.
+  </p>
+</div>
+
+<script>
+// Minimal Leaflet init for the placeholder
+var map = L.map('map', {
+  center: [55.75, 40.62],  // Russia center
+  zoom: 4,
+  minZoom: 3,
+  maxZoom: 10,
+  zoomControl: false,
+  attributionControl: false
+});
+
+L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}', {
+  maxZoom: 10
+}).addTo(map);
+</script>
+
+</body>
+</html>

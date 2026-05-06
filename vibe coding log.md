@@ -106,3 +106,35 @@
 - 键盘快捷键：Q/L/C/ESC 全部正常 ✓
 - 侧边栏切换：Routes/Characters 标签页 ✓
 - 路线切换：各角色路线显示/隐藏 ✓
+
+---
+
+# 2026-05-06 项目扩展
+
+[2026-05-06 13:40]
+
+## 📚 razors-edge-map → literary-maps 项目扩展
+
+### 变更内容
+
+1. **项目重命名**: `razors-edge-map` → `literary-maps`（文学地图集）
+2. **GitHub 仓库重命名**: `mariusiaowego-commits/razors-edge-map` → `mariusiaowego-commits/literary-maps`
+3. **目录重构**:
+   - `index.html` → `razors-edge/index.html`（刀锋地图）
+   - 新建 `karamazov/index.html`（卡拉马佐夫兄弟骨架）
+   - 新建根 `index.html`（入口选择页）
+4. **文档更新**: STATUS.md / README.md 全部重写
+
+### 目录结构
+```
+literary-maps/
+├── index.html              # 入口选择页
+├── razors-edge/index.html  # 刀锋 v2.1 (完整)
+├── karamazov/index.html    # 卡拉马佐夫 (骨架)
+├── STATUS.md
+├── README.md
+└── vibe coding log.md
+```
+
+### GitHub
+- https://github.com/mariusiaowego-commits/literary-maps
