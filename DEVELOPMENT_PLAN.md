@@ -122,7 +122,7 @@
 ## 📁 项目结构
 
 ```
-razors-edge-map/
+literary-maps/
 ├── index.html              # 完整地图应用（所有 JS/CSS 内联）
 ├── STATUS.md               # 当前开发状态
 ├── DEVELOPMENT_PLAN.md     # 本文档

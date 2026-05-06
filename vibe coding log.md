@@ -13,7 +13,7 @@
 5. **更新 README.md** — 与其他项目风格统一
 6. **新建 docs/航点数据说明.md** — 航点字段说明
 7. **新建 vibe coding log.md** — 开发日志
-8. **建立 LLM Wiki 项目文档** — Obsidian 路径 `tqob/05 Coding/project-razors-edge-map/`
+8. **建立 LLM Wiki 项目文档** — Obsidian 路径 `tqob/05 Coding/project-literary-maps/`
 
 ### GitHub Repo
 - https://github.com/mariusiaowego-commits/razors-edge-map
